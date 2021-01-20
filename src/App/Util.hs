@@ -7,25 +7,23 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App (
-    AppAPI,
-    appHandlers
+module App.Util (
+    redirect
 ) where
 
 --------------------------------------------------------------------------------
 
-import Servant
+import Data.ByteString ( ByteString )
 
-import App.Pages.Home  ( HomeAPI, homeHandlers )
-import App.Types.Monad ( AppServer )
+import Servant         ( ServerError(errHeaders), err303, throwError )
+
+import App.Types.Monad ( AppHandler )
 
 --------------------------------------------------------------------------------
 
-type AppAPI =
-      HomeAPI
- :<|> "static" :> Raw
-
-appHandlers :: AppServer AppAPI
-appHandlers = homeHandlers :<|> serveDirectoryWebApp "static/"
+-- | `redirect` @url@ short circuits the SSOHandler monad, throwing an HTTP303
+-- response which redirects to @url@
+redirect :: ByteString -> AppHandler a
+redirect url = throwError $ err303 { errHeaders = [("Location", url)] }
 
 --------------------------------------------------------------------------------

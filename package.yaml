@@ -51,6 +51,7 @@ default-extensions:
 - RecordWildCards
 - TypeApplications
 - TypeFamilies
+- TypeOperators
 
 library:
   source-dirs: src

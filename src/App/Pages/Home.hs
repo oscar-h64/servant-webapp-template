@@ -7,25 +7,32 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App (
-    AppAPI,
-    appHandlers
+module App.Pages.Home (
+    HomeAPI,
+    homeHandlers
 ) where
 
 --------------------------------------------------------------------------------
 
-import Servant
+import Servant            ( Get )
+import Servant.HTML.Blaze ( HTML )
 
-import App.Pages.Home  ( HomeAPI, homeHandlers )
-import App.Types.Monad ( AppServer )
+import Text.Hamlet        ( Html )
+
+import App.Types.Monad
 
 --------------------------------------------------------------------------------
 
-type AppAPI =
-      HomeAPI
- :<|> "static" :> Raw
+-- TODO: Move this
+type Webpage = Get '[HTML] Html
 
-appHandlers :: AppServer AppAPI
-appHandlers = homeHandlers :<|> serveDirectoryWebApp "static/"
+type HomeAPI = Webpage
+
+homeHandlers :: AppServer HomeAPI
+homeHandlers = undefined
+
+--------------------------------------------------------------------------------
+
+
 
 --------------------------------------------------------------------------------

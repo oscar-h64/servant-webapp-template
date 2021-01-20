@@ -25,16 +25,18 @@ source-repository head
 library
   exposed-modules:
       App
+      App.Pages.Home
       App.Types.Common
       App.Types.Config
       App.Types.Database
       App.Types.Environment
       App.Types.Monad
+      App.Util
   other-modules:
       Paths_servant_webapp_template
   hs-source-dirs:
       src
-  default-extensions: DataKinds DeriveGeneric DerivingStrategies DerivingVia GADTs KindSignatures OverloadedStrings RecordWildCards TypeApplications TypeFamilies
+  default-extensions: DataKinds DeriveGeneric DerivingStrategies DerivingVia GADTs KindSignatures OverloadedStrings RecordWildCards TypeApplications TypeFamilies TypeOperators
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -64,7 +66,7 @@ executable servant-webapp-template-exe
       Paths_servant_webapp_template
   hs-source-dirs:
       app
-  default-extensions: DataKinds DeriveGeneric DerivingStrategies DerivingVia GADTs KindSignatures OverloadedStrings RecordWildCards TypeApplications TypeFamilies
+  default-extensions: DataKinds DeriveGeneric DerivingStrategies DerivingVia GADTs KindSignatures OverloadedStrings RecordWildCards TypeApplications TypeFamilies TypeOperators
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson

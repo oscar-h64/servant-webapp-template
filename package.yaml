@@ -20,6 +20,37 @@ description:         Please see the README on GitHub at <https://github.com/osca
 
 dependencies:
 - base >= 4.7 && < 5
+- aeson
+- bytestring
+- deriving-aeson
+- monad-logger
+- persistent
+- persistent-postgresql
+- persistent-template
+- servant-server
+- servant-blaze
+- servant-auth
+- servant-auth-server
+- shakespeare
+- text
+- transformers
+- uuid
+- wai-enforce-https
+- warp
+- warp-tls
+- yaml
+
+default-extensions:
+- DataKinds
+- DeriveGeneric
+- DerivingStrategies
+- DerivingVia
+- GADTs
+- KindSignatures
+- OverloadedStrings
+- RecordWildCards
+- TypeApplications
+- TypeFamilies
 
 library:
   source-dirs: src

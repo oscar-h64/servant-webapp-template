@@ -1,0 +1,28 @@
+# Settings for the webserver
+server:
+  # Key to sign cookies
+  jwt-key: config/jwt.pem
+  # Port to run the server on
+  port: 8001
+  # HTTPS config for running an HTTPS server
+  https-config:
+    # Port to run HTTP server which redirects to HTTPS (optional)
+    http-port: 8000
+    # HTTPS certificate
+    cert: config/cert.pem
+    # HTTPS private key
+    key: config/key.pem
+  
+  # HTTPS config for using a resolver
+  # Resolver to use (xForwardedProto or forwarded)
+  # See https://hackage.haskell.org/package/wai-enforce-https/docs/Network-Wai-Middleware-EnforceHTTPS.html
+  # resolver: forwarded
+
+# Database settings
+db:
+  host: localhost
+  port: 5432
+  db: app
+  user: user
+  password: password
+  pools: 8

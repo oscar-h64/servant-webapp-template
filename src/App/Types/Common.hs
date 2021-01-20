@@ -13,12 +13,16 @@ module App.Types.Common (
 
 --------------------------------------------------------------------------------
 
-import Deriving.Aeson ( CustomJSON, FieldLabelModifier, StripPrefix )
+import Deriving.Aeson ( CamelToKebab, CustomJSON, FieldLabelModifier,
+                        RejectUnknownFields, StripPrefix )
 
 import GHC.TypeLits   ( Symbol )
 
 --------------------------------------------------------------------------------
 
-type JSONStripPrefix (str :: Symbol) = CustomJSON '[FieldLabelModifier (StripPrefix str)]
+type JSONStripPrefix (str :: Symbol) =
+    CustomJSON '[ FieldLabelModifier (StripPrefix str, CamelToKebab)
+                -- , RejectUnknownFields
+                ]
 
 --------------------------------------------------------------------------------

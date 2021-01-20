@@ -96,17 +96,17 @@ main = do
 
     -- Run server, either using a resolver or running an HTTPS server
     -- depending on the config
-    case serverHttpsConf of
-        Left MkHTTPSResolverConf{..} -> do
+    case (serverResolver, serverHttpsConfig) of
+        (Just resolver, Nothing) -> do
             -- Enforce HTTPS via given resolver
-            let app' = case serverResolver of
+            let app' = case resolver of
                     "forwarded" -> withResolver forwarded app
                     "xForwardedProto" -> withResolver xForwardedProto app
                     _ -> error "Invalid resolver"
             
             run serverPort app'
 
-        Right MkHTTPSActualConf{..} -> do
+        (Nothing, Just MkHTTPSConf{..}) -> do
             let app' = withConfig defaultConfig{httpsPort = serverPort} app
 
             -- run HTTP redirect server if serverHTTPPort is `Just`
@@ -119,5 +119,7 @@ main = do
             putStrLn $ "Started HTTPS server on " ++ show serverPort
             let tlsCfg = tlsSettings serverCert serverKey
             runTLS tlsCfg (setPort serverPort defaultSettings) app
+
+        _ -> error "Invalid HTTPS config, you must have exactly one of resolver or https-config set."
 
 --------------------------------------------------------------------------------

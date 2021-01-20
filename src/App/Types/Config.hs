@@ -10,8 +10,7 @@
 module App.Types.Config (
     Config(..),
     ServerConfig(..),
-    HTTPSResolverConf(..),
-    HTTPSActualConf(..),
+    HTTPSConf(..),
     DBConfig(..)
 ) where
 
@@ -35,23 +34,19 @@ data Config = MkConfig {
 
 -- | The settings for the webserver
 data ServerConfig = MkServerConfig {
-    serverJwtKey    :: FilePath,
-    serverPort      :: Int,
-    serverHttpsConf :: Either HTTPSResolverConf HTTPSActualConf
+    serverJwtKey      :: FilePath,
+    serverPort        :: Int,
+    serverResolver    :: Maybe Text,
+    serverHttpsConfig :: Maybe HTTPSConf
 } deriving Generic
   deriving FromJSON via JSONStripPrefix "server" ServerConfig
 
-newtype HTTPSResolverConf = MkHTTPSResolverConf {
-    serverResolver :: Text
-} deriving Generic
-  deriving FromJSON via JSONStripPrefix "server" HTTPSResolverConf
-
-data HTTPSActualConf = MkHTTPSActualConf {
+data HTTPSConf = MkHTTPSConf {
     serverHttpPort :: Maybe Int,
     serverCert     :: FilePath,
     serverKey      :: FilePath
 } deriving Generic
-  deriving FromJSON via JSONStripPrefix "server" HTTPSActualConf
+  deriving FromJSON via JSONStripPrefix "server" HTTPSConf
 
 -- | The settings for the database connections
 data DBConfig = MkDBConfig {

@@ -29,7 +29,7 @@ import Network.Wai.Handler.Warp            ( defaultSettings, run, setPort )
 import Network.Wai.Handler.WarpTLS         ( runTLS, tlsSettings )
 import Network.Wai.Middleware.EnforceHTTPS
 
-import Servant                             ( Context ((:.), EmptyContext),
+import Servant                             ( Context (EmptyContext, (:.)),
                                              Server, hoistServerWithContext,
                                              serveWithContext )
 import Servant.Auth.Server                 ( CookieSettings, JWTSettings,
@@ -44,7 +44,7 @@ import System.Environment                  ( getArgs )
 
 import App
 import App.Types.Config
-import App.Types.Database    ( migrateAll )
+import App.Types.Database                  ( migrateAll )
 import App.Types.Environment
 
 --------------------------------------------------------------------------------
@@ -100,10 +100,10 @@ main = do
         (Just resolver, Nothing) -> do
             -- Enforce HTTPS via given resolver
             let app' = case resolver of
-                    "forwarded" -> withResolver forwarded app
+                    "forwarded"       -> withResolver forwarded app
                     "xForwardedProto" -> withResolver xForwardedProto app
-                    _ -> error "Invalid resolver"
-            
+                    _                 -> error "Invalid resolver"
+
             run serverPort app'
 
         (Nothing, Just MkHTTPSConf{..}) -> do

@@ -16,9 +16,9 @@ module App.Types.Config (
 
 --------------------------------------------------------------------------------
 
-import Data.Text ( Text )
+import Data.Text        ( Text )
 
-import Deriving.Aeson ( CustomJSON(..), FromJSON, Generic )
+import Deriving.Aeson   ( CustomJSON (..), FromJSON, Generic )
 
 import App.Types.Common ( JSONStripPrefix )
 

@@ -31,7 +31,8 @@ library
       App.Types.Database
       App.Types.Environment
       App.Types.Monad
-      App.Util
+      App.Types.Routing
+      App.UI
   other-modules:
       Paths_servant_webapp_template
   hs-source-dirs:
@@ -40,6 +41,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , blaze-html
     , bytestring
     , deriving-aeson
     , monad-logger
@@ -71,6 +73,7 @@ executable servant-webapp-template-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , blaze-html
     , bytestring
     , deriving-aeson
     , monad-logger

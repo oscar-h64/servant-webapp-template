@@ -7,23 +7,16 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App.Util (
-    redirect
+module App.Types.Routing (
+    Page(..)
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.ByteString ( ByteString )
+data ShowInNav = Always | OnlyWhenAuthed | Never
 
-import Servant         ( ServerError(errHeaders), err303, throwError )
-
-import App.Types.Monad ( AppHandler )
-
---------------------------------------------------------------------------------
-
--- | `redirect` @url@ short circuits the SSOHandler monad, throwing an HTTP303
--- response which redirects to @url@
-redirect :: ByteString -> AppHandler a
-redirect url = throwError $ err303 { errHeaders = [("Location", url)] }
+data Page showInNav name path requiresAuth where
+    Home  :: Page Always "Home" "/" False
+    Login :: Page Always "Login" "/login" False
 
 --------------------------------------------------------------------------------

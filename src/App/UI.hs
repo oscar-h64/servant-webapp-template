@@ -9,24 +9,30 @@
 
 {-# LANGUAGE TemplateHaskell #-}
 
-module App.Pages.Home (
-    HomeAPI,
-    homeHandlers
+module App.UI (
+    makePage,
+    redirect
 ) where
 
 --------------------------------------------------------------------------------
 
-import Text.Hamlet      ( shamletFile )
+import Data.ByteString               ( ByteString )
 
-import App.Types.Common
-import App.Types.Monad
-import App.UI
+import Servant                       ( ServerError (errHeaders), err303,
+                                       throwError )
+
+import Text.Blaze.Html.Renderer.Utf8 ( renderHtml )
+import Text.Hamlet                   ( shamletFile )
+
+import App.Types.Monad               ( AppHandler )
 
 --------------------------------------------------------------------------------
 
-type HomeAPI = Webpage
+makePage pageContent = pure $(shamletFile "templates/base/layout.hamlet")
 
-homeHandlers :: AppServer HomeAPI
-homeHandlers = makePage $(shamletFile "templates/home.hamlet")
+-- | `redirect` @url@ short circuits the AppHandler monad, throwing an HTTP303
+-- response which redirects to @url@
+redirect :: ByteString -> AppHandler a
+redirect url = throwError $ err303 { errHeaders = [("Location", url)] }
 
 --------------------------------------------------------------------------------

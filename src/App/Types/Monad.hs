@@ -16,7 +16,7 @@ module App.Types.Monad (
 
 import Control.Monad.Trans.Reader ( ReaderT )
 
-import Servant.Server             ( HasServer(ServerT), Handler )
+import Servant.Server             ( Handler, HasServer (ServerT) )
 
 import App.Types.Environment      ( Environment )
 

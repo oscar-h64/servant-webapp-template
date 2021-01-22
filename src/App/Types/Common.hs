@@ -8,21 +8,31 @@
 --------------------------------------------------------------------------------
 
 module App.Types.Common (
-    JSONStripPrefix
+    JSONStripPrefix,
+    Webpage
 ) where
 
 --------------------------------------------------------------------------------
 
-import Deriving.Aeson ( CamelToKebab, CustomJSON, FieldLabelModifier,
-                        RejectUnknownFields, StripPrefix )
+import Deriving.Aeson     ( CamelToKebab, CustomJSON, FieldLabelModifier,
+                            RejectUnknownFields, StripPrefix )
 
-import GHC.TypeLits   ( Symbol )
+import GHC.TypeLits       ( Symbol )
+
+import Servant            ( Get )
+import Servant.HTML.Blaze ( HTML )
+
+import Text.Hamlet        ( Html )
 
 --------------------------------------------------------------------------------
 
 type JSONStripPrefix (str :: Symbol) =
     CustomJSON '[ FieldLabelModifier (StripPrefix str, CamelToKebab)
-                -- , RejectUnknownFields
+                -- , RejectUnknownFields -- TODO: Why does this fail
                 ]
+
+--------------------------------------------------------------------------------
+
+type Webpage = Get '[HTML] Html
 
 --------------------------------------------------------------------------------

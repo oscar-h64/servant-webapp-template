@@ -1,0 +1,6 @@
+$doctype 5
+<html>
+    <head>
+        <title>This is a TODO
+    <body>
+        ^{pageContent}

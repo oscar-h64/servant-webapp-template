@@ -3,4 +3,8 @@ $doctype 5
     <head>
         <title>This is a TODO
     <body>
+        <p style="text-align: right;">
+            <a href="@{Login}" >Login
+        $forall MkPageData _ name path _ <- navItems
+            <a href="#{path}">#{name}
         ^{pageContent}

@@ -16,19 +16,25 @@ module App.UI (
 
 --------------------------------------------------------------------------------
 
-import Data.ByteString               ( ByteString )
+import Data.ByteString   ( ByteString )
 
-import Servant                       ( ServerError (errHeaders), err303,
-                                       throwError )
+import Servant           ( ServerError (errHeaders), err303, throwError )
 
-import Text.Blaze.Html.Renderer.Utf8 ( renderHtml )
-import Text.Hamlet                   ( shamletFile )
+import Text.Hamlet       ( Html, HtmlUrl, hamletFile )
 
-import App.Types.Monad               ( AppHandler )
+import App.Types.Monad   ( AppHandler )
+import App.Types.Routing ( Page (..), PageData (..), ShowInNav (..), pageData )
 
 --------------------------------------------------------------------------------
 
-makePage pageContent = pure $(shamletFile "templates/base/layout.hamlet")
+makePage :: HtmlUrl Page -> AppHandler Html
+makePage pageContent =
+    let renderFunc page _ = pdPath $ pageData page
+        navItems = [y | x <- [minBound..maxBound]
+                      , let y = pageData x
+                      , pdShowInNav y == Always
+                   ]
+    in pure $ $(hamletFile "templates/base/layout.hamlet") renderFunc
 
 -- | `redirect` @url@ short circuits the AppHandler monad, throwing an HTTP303
 -- response which redirects to @url@

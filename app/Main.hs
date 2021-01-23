@@ -120,6 +120,7 @@ main = do
             let tlsCfg = tlsSettings serverCert serverKey
             runTLS tlsCfg (setPort serverPort defaultSettings) app
 
-        _ -> error "Invalid HTTPS config, you must have exactly one of resolver or https-config set."
+        _ -> error $ "Invalid HTTPS config, you must have exactly one of"
+                  <> " resolver or https-config set."
 
 --------------------------------------------------------------------------------

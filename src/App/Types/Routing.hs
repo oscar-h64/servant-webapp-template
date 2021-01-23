@@ -8,15 +8,33 @@
 --------------------------------------------------------------------------------
 
 module App.Types.Routing (
-    Page(..)
+    ShowInNav(..),
+    Page(..),
+    PageData(..),
+    pageData
 ) where
 
 --------------------------------------------------------------------------------
 
-data ShowInNav = Always | OnlyWhenAuthed | Never
+import Data.Text ( Text )
 
-data Page showInNav name path requiresAuth where
-    Home  :: Page Always "Home" "/" False
-    Login :: Page Always "Login" "/login" False
+--------------------------------------------------------------------------------
+
+data ShowInNav = Always | OnlyWhenAuthed | Never
+    deriving Eq
+
+data Page = Home | Login
+    deriving (Eq, Enum, Bounded)
+
+data PageData = MkPageData {
+    pdShowInNav    :: ShowInNav,
+    pdNavName      :: Text,
+    pdPath         :: Text,
+    pdRequiresAuth :: Bool
+}
+
+pageData :: Page -> PageData
+pageData Home  = MkPageData Always "Home" "/" False
+pageData Login = MkPageData Never "Login" "/login" False
 
 --------------------------------------------------------------------------------

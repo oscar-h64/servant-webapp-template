@@ -27,14 +27,13 @@ data Page = Home | Login
     deriving (Eq, Enum, Bounded)
 
 data PageData = MkPageData {
-    pdShowInNav    :: ShowInNav,
-    pdNavName      :: Text,
-    pdPath         :: Text,
-    pdRequiresAuth :: Bool
+    pdShowInNav :: ShowInNav,
+    pdNavName   :: Text,
+    pdPath      :: Text
 }
 
 pageData :: Page -> PageData
-pageData Home  = MkPageData Always "Home" "/" False
-pageData Login = MkPageData Never "Login" "/login" False
+pageData Home  = MkPageData Always "Home" "/"
+pageData Login = MkPageData Never "Login" "/login"
 
 --------------------------------------------------------------------------------

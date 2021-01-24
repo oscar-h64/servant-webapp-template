@@ -45,6 +45,7 @@ library
     , bytestring
     , deriving-aeson
     , monad-logger
+    , optparse-applicative
     , persistent
     , persistent-postgresql
     , persistent-template
@@ -77,6 +78,7 @@ executable servant-webapp-template-exe
     , bytestring
     , deriving-aeson
     , monad-logger
+    , optparse-applicative
     , persistent
     , persistent-postgresql
     , persistent-template

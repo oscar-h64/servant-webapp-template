@@ -12,7 +12,7 @@ module Main where
 --------------------------------------------------------------------------------
 
 import Control.Concurrent                  ( forkIO )
-import Control.Monad                       ( forM_, void )
+import Control.Monad                       ( forM_, void, when )
 import Control.Monad.Logger                ( runStderrLoggingT )
 import Control.Monad.Trans.Reader          ( runReaderT )
 
@@ -29,6 +29,8 @@ import Network.Wai.Handler.Warp            ( defaultSettings, run, setPort )
 import Network.Wai.Handler.WarpTLS         ( runTLS, tlsSettings )
 import Network.Wai.Middleware.EnforceHTTPS
 
+import Options.Applicative                 ( execParser )
+
 import Servant                             ( Context (EmptyContext, (:.)),
                                              Server, hoistServerWithContext,
                                              serveWithContext )
@@ -39,8 +41,6 @@ import Servant.Auth.Server                 ( CookieSettings, JWTSettings,
                                              defaultJWTSettings,
                                              defaultXsrfCookieSettings, readKey,
                                              xsrfExcludeGet )
-
-import System.Environment                  ( getArgs )
 
 import App
 import App.Types.Config
@@ -60,9 +60,8 @@ appToServer cfg = hoistServerWithContext
 -- | Entrypoint for server
 main :: IO ()
 main = do
-    -- read config from the file stated in the first argument, or
-    -- config/config.yaml if none given
-    configFile <- fromMaybe "config/config.yaml" . listToMaybe <$> getArgs
+    -- read command line arguments
+    MkCmdOpts configFile shouldMigrate <- execParser cmdOpts
     MkConfig MkServerConfig{..} MkDBConfig{..} <- decodeFileThrow configFile
 
     -- components to join to form DB connection string
@@ -78,7 +77,7 @@ main = do
              $ createPostgresqlPool (encodeUtf8 $ mconcat dbStr) dbPools
 
     -- run automatic migrations
-    runSqlPool (runMigration migrateAll) sqlPool
+    when shouldMigrate $ runSqlPool (runMigration migrateAll) sqlPool
 
     -- generate config for JWT/cookie
     jwtKey <- readKey serverJwtKey

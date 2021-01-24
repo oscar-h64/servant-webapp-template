@@ -25,6 +25,7 @@ dependencies:
 - bytestring
 - deriving-aeson
 - monad-logger
+- optparse-applicative
 - persistent
 - persistent-postgresql
 - persistent-template

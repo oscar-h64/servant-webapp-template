@@ -8,6 +8,8 @@
 --------------------------------------------------------------------------------
 
 module App.Types.Config (
+    CmdOpts(..),
+    cmdOpts,
     Config(..),
     ServerConfig(..),
     HTTPSConf(..),
@@ -16,11 +18,30 @@ module App.Types.Config (
 
 --------------------------------------------------------------------------------
 
-import Data.Text        ( Text )
+import Data.Text           ( Text )
 
-import Deriving.Aeson   ( CustomJSON (..), FromJSON, Generic )
+import Deriving.Aeson      ( CustomJSON (..), FromJSON, Generic )
 
-import App.Types.Common ( JSONStripPrefix )
+import Options.Applicative
+
+import App.Types.Common    ( JSONStripPrefix )
+
+--------------------------------------------------------------------------------
+
+data CmdOpts = MkCmdOpts {
+    optConfigFile :: FilePath,
+    optMigrate    :: Bool
+}
+
+cmdOpts :: ParserInfo CmdOpts
+cmdOpts = info (opts <**> helper) fullDesc
+  where opts = MkCmdOpts <$> strOption (short 'c'
+                                         <> long "config"
+                                         <> help "Location of the config file"
+                                         <> value "config/config.yaml"
+                                         <> showDefault)
+                         <*> switch (long "migrate"
+                                      <> help "Whether to migrate the DB")
 
 --------------------------------------------------------------------------------
 

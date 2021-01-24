@@ -29,11 +29,12 @@ data Page = Home | Login
 data PageData = MkPageData {
     pdShowInNav :: ShowInNav,
     pdNavName   :: Text,
-    pdPath      :: Text
+    pdPath      :: Text,
+    pdSubpages  :: [Page]
 }
 
 pageData :: Page -> PageData
-pageData Home  = MkPageData Always "Home" "/"
-pageData Login = MkPageData Never "Login" "/login"
+pageData Home  = MkPageData Always "Home" "/" []
+pageData Login = MkPageData Always "Login" "/login" []
 
 --------------------------------------------------------------------------------

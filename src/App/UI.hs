@@ -17,6 +17,7 @@ module App.UI (
 --------------------------------------------------------------------------------
 
 import Data.ByteString   ( ByteString )
+import Data.Text         ( Text )
 
 import Servant           ( ServerError (errHeaders), err303, throwError )
 
@@ -27,12 +28,12 @@ import App.Types.Routing ( Page (..), PageData (..), ShowInNav (..), pageData )
 
 --------------------------------------------------------------------------------
 
-makePage :: HtmlUrl Page -> AppHandler Html
-makePage pageContent =
+makePage :: Text -> Maybe Page -> HtmlUrl Page -> AppHandler Html
+makePage title mPage pageContent =
     let renderFunc page _ = pdPath $ pageData page
-        navItems = [y | x <- [minBound..maxBound]
-                      , let y = pageData x
-                      , pdShowInNav y == Always
+        navItems = [(x,y) | x <- [minBound..maxBound]
+                          , let y = pageData x
+                          , pdShowInNav y == Always
                    ]
     in pure $ $(hamletFile "templates/base/layout.hamlet") renderFunc
 

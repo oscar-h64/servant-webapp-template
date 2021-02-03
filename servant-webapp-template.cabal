@@ -33,6 +33,7 @@ library
       App.Types.Monad
       App.Types.Routing
       App.UI
+      App.UI.Form
   other-modules:
       Paths_servant_webapp_template
   hs-source-dirs:
@@ -41,8 +42,10 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , blaze-colonnade
     , blaze-html
     , bytestring
+    , colonnade
     , deriving-aeson
     , monad-logger
     , optparse-applicative
@@ -74,8 +77,10 @@ executable servant-webapp-template-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , blaze-colonnade
     , blaze-html
     , bytestring
+    , colonnade
     , deriving-aeson
     , monad-logger
     , optparse-applicative

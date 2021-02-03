@@ -35,6 +35,6 @@ data PageData = MkPageData {
 
 pageData :: Page -> PageData
 pageData Home  = MkPageData Always "Home" "/" []
-pageData Login = MkPageData Always "Login" "/login" []
+pageData Login = MkPageData Never "Login" "/login" []
 
 --------------------------------------------------------------------------------

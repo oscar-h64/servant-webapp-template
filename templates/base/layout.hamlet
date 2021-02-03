@@ -13,4 +13,6 @@ $doctype 5
                     <div .navbar-nav>
                         $forall (page, MkPageData _ name path _) <- navItems
                             <a .nav-link :mPage == Just page:.active href="#{path}">#{name}
+                    <div .navbar-nav .ms-auto>
+                        <a .nav-link :mPage == Just Login:.active href="@{Login}">Login
         ^{pageContent}

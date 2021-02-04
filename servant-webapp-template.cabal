@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       App
+      App.Pages.Auth
       App.Pages.Home
       App.Types.Common
       App.Types.Config

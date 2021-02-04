@@ -1,0 +1,9 @@
+<form name="#{name}" method=post>
+    $forall MkFormElement itemName item <- items
+        $case item
+            $of TextInput textType label mValue
+                <div .mb-3>
+                    <label for="#{mconcat [name, "-", itemName]}" .form-label>#{label}
+                    <input .form-control type="#{textTypeToInputType textType}" id="#{mconcat [name, "-", itemName]}" *{maybeToAttrib "value" mValue} />
+    <!-- DO CSRF -->
+    <input type=submit value="#{fromMaybe "Submit" mSubmitVal}" .w-100 .btn .btn-success />

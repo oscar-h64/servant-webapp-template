@@ -16,6 +16,7 @@ module App (
 
 import Servant
 
+import App.Pages.Auth  ( AuthAPI, authHandlers )
 import App.Pages.Home  ( HomeAPI, homeHandlers )
 import App.Types.Monad ( AppServer )
 
@@ -23,9 +24,10 @@ import App.Types.Monad ( AppServer )
 
 type AppAPI =
       HomeAPI
+ :<|> "auth" :> AuthAPI
  :<|> "static" :> Raw
 
 appHandlers :: AppServer AppAPI
-appHandlers = homeHandlers :<|> serveDirectoryWebApp "static/"
+appHandlers = homeHandlers :<|> authHandlers :<|> serveDirectoryWebApp "static/"
 
 --------------------------------------------------------------------------------

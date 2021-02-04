@@ -7,34 +7,37 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App.Types.Routing (
-    ShowInNav(..),
-    Page(..),
-    PageData(..),
-    pageData
+{-# LANGUAGE TemplateHaskell #-}
+
+module App.Pages.Auth (
+    AuthAPI,
+    authHandlers
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.Text ( Text )
+import Text.Hamlet       ( Html, hamletFile )
+
+import Servant           ( (:>) )
+
+import App.Types.Common
+import App.Types.Monad
+import App.Types.Routing
+import App.UI
+import App.UI.Form
 
 --------------------------------------------------------------------------------
 
-data ShowInNav = Always | OnlyWhenAuthed | Never
-    deriving Eq
+type AuthAPI = "login" :> Webpage
 
-data Page = Home | Login
-    deriving (Eq, Enum, Bounded)
+loginPage :: AppHandler Html
+loginPage = makePage "Login" (pure Login) $(hamletFile "templates/login.hamlet")
+    where loginForm = renderForm $ MkForm "loginForm" (Just "Login")
+              [ MkFormElement "username" $ TextInput Plain    "Username" Nothing
+              , MkFormElement "password" $ TextInput Password "Password" Nothing
+              ]
 
-data PageData = MkPageData {
-    pdShowInNav :: ShowInNav,
-    pdNavName   :: Text,
-    pdPath      :: Text,
-    pdSubpages  :: [Page]
-}
-
-pageData :: Page -> PageData
-pageData Home  = MkPageData Always "Home" "/" []
-pageData Login = MkPageData Never "Login" "/auth/login" []
+authHandlers :: AppServer AuthAPI
+authHandlers = loginPage
 
 --------------------------------------------------------------------------------

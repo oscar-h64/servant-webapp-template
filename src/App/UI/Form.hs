@@ -7,31 +7,40 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module App.UI.Form (
+    TextType(..),
     FormElement(..),
     FormElementType(..),
-    Form,
+    Form(..),
     renderForm
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.Text   ( Text )
+import Data.Maybe        ( fromMaybe )
+import Data.Text         ( Text )
 
-import Text.Hamlet
+import Text.Hamlet       ( HtmlUrl, hamletFile )
+
+import App.Types.Routing
 
 --------------------------------------------------------------------------------
 
 data FormElement = MkFormElement Text FormElementType
 
--- TODO: More form elements
-data FormElementType
-    = TextInput Text (Maybe Text) -- Placeholder, value
-    | PasswordInput Text (Maybe Text) -- Placeholder, value
+data TextType = Plain | Email | Password
 
-type Form = [FormElement]
+textTypeToInputType :: TextType -> Text
+textTypeToInputType Plain    = "text"
+textTypeToInputType Email    = "email"
+textTypeToInputType Password = "password"
+
+-- TODO: More form elements
+data FormElementType = TextInput TextType Text (Maybe Text)
+
+data Form = MkForm Text (Maybe Text) [FormElement] -- Name, Submit button text
 
 --------------------------------------------------------------------------------
 
@@ -40,17 +49,8 @@ maybeToAttrib attrib (Just v) = [("value", v)]
 maybeToAttrib _      Nothing  = []
 
 -- TODO: Boostrap this
-renderForm :: Text -> Form -> Html
-renderForm name items = [shamlet|
-<form name="#{name}" method=post>
-    $forall MkFormElement itemName item <- items
-        $case item
-            $of TextInput placeholder mValue
-                <input type=text placeholder="#{placeholder}" *{maybeToAttrib "value" mValue} />
-            $of PasswordInput placeholder mValue
-                <input type=password placeholder="#{placeholder}" *{maybeToAttrib "value" mValue} />
-    <p> DO CSRF
-    <p> DO SUBMIT
-|]
+renderForm :: Form -> HtmlUrl Page
+renderForm (MkForm name mSubmitVal items) =
+    $(hamletFile "templates/components/form.hamlet")
 
 --------------------------------------------------------------------------------

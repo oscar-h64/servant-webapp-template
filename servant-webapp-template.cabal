@@ -49,6 +49,7 @@ library
     , colonnade
     , deriving-aeson
     , monad-logger
+    , mtl
     , optparse-applicative
     , persistent
     , persistent-postgresql
@@ -84,6 +85,7 @@ executable servant-webapp-template-exe
     , colonnade
     , deriving-aeson
     , monad-logger
+    , mtl
     , optparse-applicative
     , persistent
     , persistent-postgresql

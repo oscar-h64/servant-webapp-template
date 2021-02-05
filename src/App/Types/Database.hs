@@ -17,6 +17,9 @@ module App.Types.Database (
 
 --------------------------------------------------------------------------------
 
+import Control.Monad.IO.Class      ( liftIO )
+import Control.Monad.Reader        ( asks )
+
 import Data.ByteString.Char8       as BS ( pack, unpack )
 import Data.UUID                   ( UUID, fromString, toString )
 
@@ -25,6 +28,9 @@ import Database.Persist            as ReExport ( Entity (..), Key (..) )
 import Database.Persist.Postgresql
 import Database.Persist.Sql
 import Database.Persist.TH
+
+import App.Types.Environment
+import App.Types.Monad
 
 --------------------------------------------------------------------------------
 
@@ -45,5 +51,10 @@ instance PersistField UUID where
 
 instance PersistFieldSql UUID where
     sqlType _ = SqlOther "uuid"
+
+--------------------------------------------------------------------------------
+
+runDB :: SqlPersistT IO a -> AppHandler a
+runDB query = asks envConnectionPool >>= liftIO . runSqlPool query
 
 --------------------------------------------------------------------------------

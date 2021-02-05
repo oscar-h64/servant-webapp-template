@@ -27,6 +27,7 @@ dependencies:
 - colonnade
 - deriving-aeson
 - monad-logger
+- mtl
 - optparse-applicative
 - persistent
 - persistent-postgresql

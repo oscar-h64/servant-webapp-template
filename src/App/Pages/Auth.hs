@@ -16,7 +16,7 @@ module App.Pages.Auth (
 
 --------------------------------------------------------------------------------
 
-import Text.Hamlet       ( Html, hamletFile )
+import Text.Hamlet       ( Html )
 
 import Servant           ( (:>) )
 
@@ -31,7 +31,7 @@ import App.UI.Form
 type AuthAPI = "login" :> Webpage
 
 loginPage :: AppHandler Html
-loginPage = makePage "Login" (pure Login) $(hamletFile "templates/login.hamlet")
+loginPage = makePage "Login" (pure Login) $(hamletFile "login")
     where loginForm = renderForm $ MkForm "loginForm" (Just "Login")
               [ MkFormElement "username" $ TextInput Plain    "Username" Nothing
               , MkFormElement "password" $ TextInput Password "Password" Nothing

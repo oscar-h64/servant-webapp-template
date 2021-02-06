@@ -10,23 +10,29 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module App.UI (
+    hamletFile,
     makePage,
     redirect
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.ByteString   ( ByteString )
-import Data.Text         ( Text )
+import           Data.ByteString   ( ByteString )
+import           Data.Text         ( Text )
 
-import Servant           ( ServerError (errHeaders), err303, throwError )
+import           Servant           ( ServerError (errHeaders), err303,
+                                     throwError )
 
-import Text.Hamlet       ( Html, HtmlUrl, hamletFile )
+import           Text.Hamlet       ( Html, HtmlUrl )
+import qualified Text.Hamlet       as H ( hamletFile )
 
-import App.Types.Monad   ( AppHandler )
-import App.Types.Routing ( Page (..), PageData (..), ShowInNav (..), pageData )
+import           App.Types.Monad   ( AppHandler )
+import           App.Types.Routing ( Page (..), PageData (..), ShowInNav (..),
+                                     pageData )
 
 --------------------------------------------------------------------------------
+
+hamletFile p = H.hamletFile $ "templates/" <> p <> ".hamlet"
 
 makePage :: Text -> Maybe Page -> HtmlUrl Page -> AppHandler Html
 makePage title mPage pageContent =
@@ -35,7 +41,7 @@ makePage title mPage pageContent =
                           , let y = pageData x
                           , pdShowInNav y == Always
                    ]
-    in pure $ $(hamletFile "templates/base/layout.hamlet") renderFunc
+    in pure $ $(H.hamletFile "templates/base/layout.hamlet") renderFunc
 
 -- | `redirect` @url@ short circuits the AppHandler monad, throwing an HTTP303
 -- response which redirects to @url@

@@ -41,9 +41,6 @@ Run the app with `stack run`. There are 2 options that can be passed:
 1. Create a hamlet file under `templates/` for this page, and put the main content in there
 
 ## TODO:
-**Templates:**
-- Removing need for `"template/"`
-- Remove need for `".hamlet"` and include CSS and JS templates of same name
 
 **Auth:**
 - Everything

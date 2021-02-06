@@ -16,8 +16,6 @@ module App.Pages.Home (
 
 --------------------------------------------------------------------------------
 
-import Text.Hamlet       ( hamletFile )
-
 import App.Types.Common
 import App.Types.Monad
 import App.Types.Routing
@@ -28,6 +26,6 @@ import App.UI
 type HomeAPI = Webpage
 
 homeHandlers :: AppServer HomeAPI
-homeHandlers = makePage "Home" (pure Home) $(hamletFile "templates/home.hamlet")
+homeHandlers = makePage "Home" (pure Home) $(hamletFile "home")
 
 --------------------------------------------------------------------------------

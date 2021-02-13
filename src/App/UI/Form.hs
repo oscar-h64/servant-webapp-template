@@ -48,7 +48,6 @@ maybeToAttrib :: Text -> Maybe Text -> [(Text, Text)]
 maybeToAttrib attrib (Just v) = [("value", v)]
 maybeToAttrib _      Nothing  = []
 
--- TODO: Boostrap this
 renderForm :: Form -> HtmlUrl Page
 renderForm (MkForm name mSubmitVal items) =
     $(hamletFile "templates/components/form.hamlet")

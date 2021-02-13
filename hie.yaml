@@ -1,0 +1,10 @@
+cradle:
+    stack:
+    - path: ./src
+      component: servant-webapp-template:lib
+    - path: ./app
+      component: servant-webapp-template:exe:servant-webapp-template
+
+dependencies:
+- stack.yaml
+- package.yaml

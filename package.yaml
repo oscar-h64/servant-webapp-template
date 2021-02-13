@@ -62,7 +62,7 @@ library:
   source-dirs: src
 
 executables:
-  servant-webapp-template-exe:
+  servant-webapp-template:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

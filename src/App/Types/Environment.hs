@@ -15,14 +15,20 @@ module App.Types.Environment (
 
 import Database.Persist.Postgresql ( ConnectionPool )
 
+import Network.Mail.Mime           ( Address )
+
 import Servant.Auth.Server         ( CookieSettings, JWTSettings )
+
+import App.Types.Common            ( EmailChannel )
 
 --------------------------------------------------------------------------------
 
 data Environment = MkEnvironment {
-    envConnectionPool :: ConnectionPool,
-    envJWTConfig      :: JWTSettings,
-    envCookieConfig   :: CookieSettings
+    envConnectionPool   :: ConnectionPool,
+    envJWTConfig        :: JWTSettings,
+    envCookieConfig     :: CookieSettings,
+    envEmailChannel     :: EmailChannel,
+    envEmailDefaultFrom :: Address
 }
 
 --------------------------------------------------------------------------------

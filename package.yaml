@@ -26,6 +26,7 @@ dependencies:
 - bytestring
 - colonnade
 - deriving-aeson
+- mime-mail
 - monad-logger
 - mtl
 - optparse-applicative
@@ -37,6 +38,7 @@ dependencies:
 - servant-auth
 - servant-auth-server
 - shakespeare
+- smtp-mail
 - text
 - transformers
 - uuid

@@ -11,7 +11,7 @@ module Main where
 
 --------------------------------------------------------------------------------
 
-import Control.Concurrent                  ( forkIO )
+import Control.Concurrent                  ( forkIO, newChan )
 import Control.Monad                       ( forM_, void, when )
 import Control.Monad.Logger                ( runStderrLoggingT )
 import Control.Monad.Trans.Reader          ( runReaderT )
@@ -25,6 +25,7 @@ import Data.Yaml                           ( decodeFileThrow )
 import Database.Persist.Postgresql         ( createPostgresqlPool, runMigration,
                                              runSqlPool )
 
+import Network.Mail.Mime                   ( Address(..) )
 import Network.Wai.Handler.Warp            ( defaultSettings, run, setPort )
 import Network.Wai.Handler.WarpTLS         ( runTLS, tlsSettings )
 import Network.Wai.Middleware.EnforceHTTPS
@@ -46,6 +47,7 @@ import App
 import App.Types.Config
 import App.Types.Database                  ( migrateAll )
 import App.Types.Environment
+import App.Util.Email                      ( emailThread )
 
 --------------------------------------------------------------------------------
 
@@ -62,7 +64,9 @@ main :: IO ()
 main = do
     -- read command line arguments
     MkCmdOpts configFile shouldMigrate <- execParser cmdOpts
-    MkConfig MkServerConfig{..} MkDBConfig{..} <- decodeFileThrow configFile
+    MkConfig{..} <- decodeFileThrow configFile
+    let MkServerConfig{..} = cfgServer
+    let MkDBConfig{..} = cfgDb
 
     -- components to join to form DB connection string
     let dbStr = [ "host=", dbHost
@@ -88,10 +92,19 @@ main = do
         }
     let cfg = cookieCfg :. jwtCfg :. EmptyContext
 
+    -- Start the email thread if the SMTP config is set
+    emailChan <- newChan
+    forkIO $ emailThread cfgSmtp emailChan
+
+    -- The default from address to use. If there is no SMTP config we just use
+    -- default@app since its only outputted to stdout in this case
+    let emailDefaultFrom = fromMaybe (Address Nothing "default@app") 
+                         $ cfgSmtp >>= smtpDefaultFrom
+
     -- Create basic app
     let app = serveWithContext (Proxy @AppAPI) cfg
             $ appToServer
-            $ MkEnvironment sqlPool jwtCfg cookieCfg
+            $ MkEnvironment sqlPool jwtCfg cookieCfg emailChan emailDefaultFrom
 
     -- Run server, either using a resolver or running an HTTPS server
     -- depending on the config
@@ -105,7 +118,7 @@ main = do
 
             run serverPort app'
 
-        (Nothing, Just MkHTTPSConf{..}) -> do
+        (Nothing, Just MkHTTPSConfig{..}) -> do
             let app' = withConfig defaultConfig{httpsPort = serverPort} app
 
             -- run HTTP redirect server if serverHTTPPort is `Just`

@@ -26,3 +26,14 @@ db:
   user: user
   password: password
   pools: 8
+
+# SMTP configuration (optional)
+smtp:
+  hostname: smtp.example.com
+  username: app@example.com
+  password: example
+  # The default address to send emails from (can be overridden on a per email basis)
+  default-from:
+    # The name field is optional - if its omitted emails appear as just from the address 
+    name: "App"
+    address: "no-reply@example.com"

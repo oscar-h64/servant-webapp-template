@@ -12,15 +12,19 @@ module App.Types.Config (
     cmdOpts,
     Config(..),
     ServerConfig(..),
-    HTTPSConf(..),
-    DBConfig(..)
+    HTTPSConfig(..),
+    DBConfig(..),
+    SMTPConfig(..)
 ) where
 
 --------------------------------------------------------------------------------
 
 import Data.Text           ( Text )
 
+import Data.Aeson          ( (.:), (.:?), withObject, FromJSON(..) )
 import Deriving.Aeson      ( CustomJSON (..), FromJSON, Generic )
+
+import Network.Mail.SMTP   ( Address(Address) )
 
 import Options.Applicative
 
@@ -49,7 +53,8 @@ cmdOpts = info (opts <**> helper) fullDesc
 -- configuration
 data Config = MkConfig {
     cfgServer :: ServerConfig,
-    cfgDb     :: DBConfig
+    cfgDb     :: DBConfig,
+    cfgSmtp   :: Maybe SMTPConfig
 } deriving Generic
   deriving FromJSON via JSONStripPrefix "cfg" Config
 
@@ -58,16 +63,16 @@ data ServerConfig = MkServerConfig {
     serverJwtKey      :: FilePath,
     serverPort        :: Int,
     serverResolver    :: Maybe Text,
-    serverHttpsConfig :: Maybe HTTPSConf
+    serverHttpsConfig :: Maybe HTTPSConfig
 } deriving Generic
   deriving FromJSON via JSONStripPrefix "server" ServerConfig
 
-data HTTPSConf = MkHTTPSConf {
+data HTTPSConfig = MkHTTPSConfig {
     serverHttpPort :: Maybe Int,
     serverCert     :: FilePath,
     serverKey      :: FilePath
 } deriving Generic
-  deriving FromJSON via JSONStripPrefix "server" HTTPSConf
+  deriving FromJSON via JSONStripPrefix "server" HTTPSConfig
 
 -- | The settings for the database connections
 data DBConfig = MkDBConfig {
@@ -79,5 +84,19 @@ data DBConfig = MkDBConfig {
     dbPools    :: Int
 } deriving Generic
   deriving FromJSON via JSONStripPrefix "db" DBConfig
+
+-- | The settings for the SMTP server
+data SMTPConfig = MkSMTPConfig {
+    smtpHostname    :: String,
+    smtpUsername    :: String,
+    smtpPassword    :: String,
+    smtpDefaultFrom :: Maybe Address
+} deriving Generic
+  deriving FromJSON via JSONStripPrefix "smtp" SMTPConfig
+
+instance FromJSON Address where
+    parseJSON = withObject "Address" $ \v ->
+        Address <$> v .:? "name"
+                <*> v .:  "address"
 
 --------------------------------------------------------------------------------

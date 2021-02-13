@@ -9,15 +9,20 @@
 
 module App.Types.Common (
     JSONStripPrefix,
-    Webpage
+    Webpage,
+    EmailChannel
 ) where
 
 --------------------------------------------------------------------------------
+
+import Control.Concurrent ( Chan )
 
 import Deriving.Aeson     ( CamelToKebab, CustomJSON, FieldLabelModifier,
                             RejectUnknownFields, StripPrefix )
 
 import GHC.TypeLits       ( Symbol )
+
+import Network.Mail.Mime  ( Mail )
 
 import Servant            ( Get )
 import Servant.HTML.Blaze ( HTML )
@@ -34,5 +39,9 @@ type JSONStripPrefix (str :: Symbol) =
 --------------------------------------------------------------------------------
 
 type Webpage = Get '[HTML] Html
+
+--------------------------------------------------------------------------------
+
+type EmailChannel = Chan Mail
 
 --------------------------------------------------------------------------------

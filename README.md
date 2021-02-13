@@ -48,8 +48,14 @@ Run the app with `stack run`. There are 2 options that can be passed:
 **Documentation:**
 - Most things
 
+**Page building:**
+- Add more form elements
+- Make forms (and pages in general) accessible
+- Add helper for tables
+
 **General:**
 - Rearrange some modules - in particular:
     - `App.Types.Routing` is not just types
-    - `App.Types.Common` should maybe be called `JSON` instead depending what else goes in there
 - Potentially add a re-export module to simplify imports
+- Email support
+- Logging

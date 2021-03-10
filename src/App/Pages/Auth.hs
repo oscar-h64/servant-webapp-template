@@ -19,8 +19,10 @@ module App.Pages.Auth (
 import Control.Monad.IO.Class ( liftIO )
 import Control.Monad.Reader   ( ask )
 
+import Data.Text              ( Text )
+
 import Servant
-import Servant.Auth.Server    ( SetCookie, acceptLogin )
+import Servant.Auth.Server    ( AuthResult (..), SetCookie, acceptLogin )
 import Servant.HTML.Blaze     ( HTML )
 
 import Text.Hamlet            ( Html )
@@ -33,32 +35,45 @@ import App.Util.Error
 
 --------------------------------------------------------------------------------
 
-type AuthAPI = "login" :> ( Webpage
-                       :<|> Post '[HTML] (AuthCookies Html)
+-- TODO: Cleanup this file
+
+type AuthAPI = "login" :> ( RequireAuth :> Webpage
+                       :<|> Redirect' (AuthCookies '[Header "Location" Text]
+                                                   NoContent
+                                      )
                           )
 
-type AuthCookies a = Headers '[ Header "Set-Cookie" SetCookie
-                              , Header "Set-Cookie" SetCookie
-                              ]
-                             a
+type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
+                                 ': Header "Set-Cookie" SetCookie
+                                 ': hs
+                                )
+                                a
+
+
+handleLoginPage :: AppHandlerAuth Html
+handleLoginPage (Authenticated _) = redirect Home
+handleLoginPage _                 = loginPage
 
 loginPage :: AppHandler Html
-loginPage = makePage "Login" (pure Login) $(hamletFile "login")
-    where loginForm = renderForm $ MkForm "loginForm" (Just "Login")
-              [ MkFormElement "username" $ TextInput Plain    "Username" Nothing
-              , MkFormElement "password" $ TextInput Password "Password" Nothing
-              ]
+loginPage =
+    let loginForm = renderForm $ MkForm "loginForm" (Just "Login")
+            [ MkFormElement "username" $ TextInput Plain    "Username" Nothing
+            , MkFormElement "password" $ TextInput Password "Password" Nothing
+            ]
+    in makePage "Login" (pure Login) $(hamletFile "login")
 
-loginPost :: AppHandler (AuthCookies Html)
+-- Temporary login endpoint - just logs in anyone that POSTs here
+loginPost :: AppHandler (AuthCookies '[Header "Location" Text] NoContent)
 loginPost = do
     env <- ask
     mApplyCookies <- liftIO $ acceptLogin (envCookieConfig env)
                                           (envJWTConfig env)
                                           (0 :: Int)
 
-    maybe error401 (<$> loginPage) mApplyCookies
+    applyAuthCookies <- maybe error401 pure mApplyCookies
+    pure $ applyAuthCookies $ addHeader (getPagePath Home) NoContent
 
 authHandlers :: AppServer AuthAPI
-authHandlers = loginPage :<|> loginPost
+authHandlers = handleLoginPage :<|> loginPost
 
 --------------------------------------------------------------------------------

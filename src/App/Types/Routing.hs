@@ -11,7 +11,8 @@ module App.Types.Routing (
     ShowInNav(..),
     Page(..),
     PageData(..),
-    pageData
+    pageData,
+    getPagePath
 ) where
 
 --------------------------------------------------------------------------------
@@ -37,5 +38,8 @@ pageData :: Page -> PageData
 pageData Home  = MkPageData Always "Home" "/" []
 pageData Page1 = MkPageData Always "Page 1" "/page1" []
 pageData Login = MkPageData Never "Login" "/auth/login" []
+
+getPagePath :: Page -> Text
+getPagePath = pdPath . pageData
 
 --------------------------------------------------------------------------------

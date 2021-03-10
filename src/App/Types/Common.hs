@@ -17,6 +17,9 @@ module App.Types.Common (
     AppHandlerAuth,
 
     Webpage,
+    Webpage',
+    Redirect,
+    Redirect',
 
     EmailChannel,
 
@@ -38,7 +41,7 @@ import GHC.TypeLits                ( Symbol )
 
 import Network.Mail.Mime           ( Address, Mail )
 
-import Servant                     ( Get )
+import Servant
 import Servant.Auth                ( Auth, Cookie )
 import Servant.Auth.Server         ( AuthResult, CookieSettings, FromJWT,
                                      JWTSettings, ToJWT )
@@ -78,9 +81,14 @@ instance ToJWT Int
 
 --------------------------------------------------------------------------------
 
--- Routing:
+-- Routing: These are quick aliases for use in API types. The ' versions allow
+-- specifying a custom return type, which is useful for adding headers etc.
 
 type Webpage = Get '[HTML] Html
+type Webpage' a = Get '[HTML] a
+
+type Redirect = Verb POST 303 '[HTML] NoContent
+type Redirect' a = Verb POST 303 '[HTML] a
 
 --------------------------------------------------------------------------------
 

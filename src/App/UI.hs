@@ -29,7 +29,7 @@ import qualified Text.Hamlet        as H ( hamletFile )
 
 import           App.Types.Common   ( AppHandler )
 import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
-                                      pageData )
+                                      getPagePath, pageData )
 
 --------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ hamletFile p = H.hamletFile $ "templates/" <> p <> ".hamlet"
 
 makePage :: Text -> Maybe Page -> HtmlUrl Page -> AppHandler Html
 makePage title mPage pageContent =
-    let renderFunc page _ = pdPath $ pageData page
+    let renderFunc page _ = getPagePath page
         navItems = [(x,y) | x <- [minBound..maxBound]
                           , let y = pageData x
                           , pdShowInNav y == Always
@@ -49,7 +49,7 @@ makePage title mPage pageContent =
 redirect :: Page -> AppHandler a
 redirect page = throwError
               $ err303 { errHeaders = [( "Location"
-                                       , encodeUtf8 $ pdPath $ pageData page
+                                       , encodeUtf8 $ getPagePath page
                                        )] }
 
 -- | `redirect'` @url@ short circuits the AppHandler monad, throwing an HTTP303

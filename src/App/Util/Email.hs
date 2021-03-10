@@ -37,7 +37,7 @@ import Text.Hamlet                   ( Html, HtmlUrl )
 import App.Types.Common              ( AppHandler, EmailChannel,
                                        Environment (..) )
 import App.Types.Config              ( SMTPConfig (..) )
-import App.Types.Routing             ( Page, PageData (..), pageData )
+import App.Types.Routing             ( Page, PageData (..), getPagePath )
 
 --------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ type Attachments = [(Text, FilePath)]
 -- sendEmail to subject plainText $ emailTemplate $(hamletFile "emails/example")
 
 emailTemplate :: HtmlUrl Page -> Maybe Html
-emailTemplate html = pure $ html (\page _ -> pdPath $ pageData page)
+emailTemplate html = pure $ html (\page _ -> getPagePath page)
 
 --------------------------------------------------------------------------------
 

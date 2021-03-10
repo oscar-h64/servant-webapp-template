@@ -44,9 +44,9 @@ import Servant.Auth.Server                 ( CookieSettings, JWTSettings,
                                              xsrfExcludeGet )
 
 import App
+import App.Types.Common
 import App.Types.Config
 import App.Types.Database                  ( migrateAll )
-import App.Types.Environment
 import App.Util.Email                      ( emailThread )
 
 --------------------------------------------------------------------------------

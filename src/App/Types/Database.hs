@@ -33,8 +33,7 @@ import Database.Persist.Postgresql
 import Database.Persist.Sql
 import Database.Persist.TH
 
-import App.Types.Environment
-import App.Types.Monad
+import App.Types.Common
 
 --------------------------------------------------------------------------------
 

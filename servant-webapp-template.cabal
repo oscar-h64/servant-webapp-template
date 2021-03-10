@@ -27,15 +27,16 @@ library
       App
       App.Pages.Auth
       App.Pages.Home
+      App.Pages.Page1
       App.Types.Common
       App.Types.Config
       App.Types.Database
-      App.Types.Environment
-      App.Types.Monad
       App.Types.Routing
       App.UI
       App.UI.Form
+      App.Util.Auth
       App.Util.Email
+      App.Util.Error
   other-modules:
       Paths_servant_webapp_template
   hs-source-dirs:
@@ -57,6 +58,7 @@ library
     , base >=4.7 && <5
     , blaze-colonnade
     , blaze-html
+    , blaze-markup
     , bytestring
     , colonnade
     , deriving-aeson
@@ -106,6 +108,7 @@ executable servant-webapp-template
     , base >=4.7 && <5
     , blaze-colonnade
     , blaze-html
+    , blaze-markup
     , bytestring
     , colonnade
     , deriving-aeson

@@ -23,6 +23,7 @@ dependencies:
 - aeson
 - blaze-colonnade
 - blaze-html
+- blaze-markup
 - bytestring
 - colonnade
 - deriving-aeson

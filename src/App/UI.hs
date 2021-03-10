@@ -12,23 +12,24 @@
 module App.UI (
     hamletFile,
     makePage,
-    redirect
+    redirect,
+    redirect'
 ) where
 
 --------------------------------------------------------------------------------
 
-import           Data.ByteString   ( ByteString )
-import           Data.Text         ( Text )
+import           Data.Text          ( Text )
+import           Data.Text.Encoding ( encodeUtf8 )
 
-import           Servant           ( ServerError (errHeaders), err303,
-                                     throwError )
+import           Servant            ( ServerError (errHeaders), err303,
+                                      throwError )
 
-import           Text.Hamlet       ( Html, HtmlUrl )
-import qualified Text.Hamlet       as H ( hamletFile )
+import           Text.Hamlet        ( Html, HtmlUrl )
+import qualified Text.Hamlet        as H ( hamletFile )
 
-import           App.Types.Monad   ( AppHandler )
-import           App.Types.Routing ( Page (..), PageData (..), ShowInNav (..),
-                                     pageData )
+import           App.Types.Common   ( AppHandler )
+import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
+                                      pageData )
 
 --------------------------------------------------------------------------------
 
@@ -43,9 +44,18 @@ makePage title mPage pageContent =
                    ]
     in pure $ $(H.hamletFile "templates/base/layout.hamlet") renderFunc
 
--- | `redirect` @url@ short circuits the AppHandler monad, throwing an HTTP303
--- response which redirects to @url@
-redirect :: ByteString -> AppHandler a
-redirect url = throwError $ err303 { errHeaders = [("Location", url)] }
+-- | `redirect` @page@ short circuits the AppHandler monad, throwing an HTTP303
+-- response which redirects to the page @page@
+redirect :: Page -> AppHandler a
+redirect page = throwError
+              $ err303 { errHeaders = [( "Location"
+                                       , encodeUtf8 $ pdPath $ pageData page
+                                       )] }
+
+-- | `redirect'` @url@ short circuits the AppHandler monad, throwing an HTTP303
+-- response which redirects to the URL @url@
+redirect' :: Text -> AppHandler a
+redirect' url = throwError
+              $ err303 { errHeaders = [("Location", encodeUtf8 url)] }
 
 --------------------------------------------------------------------------------

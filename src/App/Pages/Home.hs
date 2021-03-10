@@ -17,7 +17,6 @@ module App.Pages.Home (
 --------------------------------------------------------------------------------
 
 import App.Types.Common
-import App.Types.Monad
 import App.Types.Routing
 import App.UI
 

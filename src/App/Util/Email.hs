@@ -34,10 +34,9 @@ import Network.Mail.SMTP             ( sendMailWithLoginTLS, simpleMail )
 import Text.Blaze.Html.Renderer.Text ( renderHtml )
 import Text.Hamlet                   ( Html, HtmlUrl )
 
-import App.Types.Common              ( EmailChannel )
+import App.Types.Common              ( AppHandler, EmailChannel,
+                                       Environment (..) )
 import App.Types.Config              ( SMTPConfig (..) )
-import App.Types.Environment         ( Environment (..) )
-import App.Types.Monad               ( AppHandler )
 import App.Types.Routing             ( Page, PageData (..), pageData )
 
 --------------------------------------------------------------------------------

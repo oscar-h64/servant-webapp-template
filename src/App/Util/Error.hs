@@ -7,28 +7,31 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App.Types.Environment (
-    Environment(..)
+{-# LANGUAGE TemplateHaskell #-}
+
+module App.Util.Error (
+    error401,
+    error403
 ) where
 
 --------------------------------------------------------------------------------
 
-import Database.Persist.Postgresql ( ConnectionPool )
+import Servant                  ( ServerError (..), err401, err403, throwError )
 
-import Network.Mail.Mime           ( Address )
+import Text.Blaze.Renderer.Utf8 ( renderMarkup )
 
-import Servant.Auth.Server         ( CookieSettings, JWTSettings )
-
-import App.Types.Common            ( EmailChannel )
+import App.Types.Common         ( AppHandler, AppServer )
+import App.Types.Routing        ( Page (..) )
+import App.UI                   ( hamletFile, makePage, redirect )
 
 --------------------------------------------------------------------------------
 
-data Environment = MkEnvironment {
-    envConnectionPool   :: ConnectionPool,
-    envJWTConfig        :: JWTSettings,
-    envCookieConfig     :: CookieSettings,
-    envEmailChannel     :: EmailChannel,
-    envEmailDefaultFrom :: Address
-}
+error401 :: AppHandler a
+error401 = redirect Login
+
+error403 :: Maybe Page -> AppHandler a
+error403 mPage = do
+    page <- makePage "Permission Denied" mPage $(hamletFile "errors/403")
+    throwError $ err403 { errBody = renderMarkup page }
 
 --------------------------------------------------------------------------------

@@ -9,27 +9,47 @@
 
 module App.Types.Common (
     JSONStripPrefix,
+
+    AppHandler,
+    AppServer,
+
+    RequireAuth,
+    AppHandlerAuth,
+
     Webpage,
-    EmailChannel
+
+    EmailChannel,
+
+    Environment(..)
 ) where
 
 --------------------------------------------------------------------------------
 
-import Control.Concurrent ( Chan )
+import Control.Concurrent          ( Chan )
+import Control.Monad.Trans.Reader  ( ReaderT )
 
-import Deriving.Aeson     ( CamelToKebab, CustomJSON, FieldLabelModifier,
-                            RejectUnknownFields, StripPrefix )
+import Database.Persist.Postgresql ( ConnectionPool )
 
-import GHC.TypeLits       ( Symbol )
+import Deriving.Aeson              ( CamelToKebab, CustomJSON,
+                                     FieldLabelModifier, RejectUnknownFields,
+                                     StripPrefix )
 
-import Network.Mail.Mime  ( Mail )
+import GHC.TypeLits                ( Symbol )
 
-import Servant            ( Get )
-import Servant.HTML.Blaze ( HTML )
+import Network.Mail.Mime           ( Address, Mail )
 
-import Text.Hamlet        ( Html )
+import Servant                     ( Get )
+import Servant.Auth                ( Auth, Cookie )
+import Servant.Auth.Server         ( AuthResult, CookieSettings, FromJWT,
+                                     JWTSettings, ToJWT )
+import Servant.HTML.Blaze          ( HTML )
+import Servant.Server              ( Handler, HasServer (ServerT) )
+
+import Text.Hamlet                 ( Html )
 
 --------------------------------------------------------------------------------
+
+-- JSON:
 
 type JSONStripPrefix (str :: Symbol) =
     CustomJSON '[ FieldLabelModifier (StripPrefix str, CamelToKebab)
@@ -38,10 +58,46 @@ type JSONStripPrefix (str :: Symbol) =
 
 --------------------------------------------------------------------------------
 
+-- Monads:
+
+type AppHandler = ReaderT Environment Handler
+
+type AppServer api = ServerT api AppHandler
+
+--------------------------------------------------------------------------------
+
+-- Auth:
+
+type RequireAuth = Auth '[Cookie] Int
+
+-- The RequireAuth combinator should go last in order to use AppHandlerAuth
+type AppHandlerAuth a = AuthResult Int -> AppHandler a
+
+instance FromJWT Int
+instance ToJWT Int
+
+--------------------------------------------------------------------------------
+
+-- Routing:
+
 type Webpage = Get '[HTML] Html
 
 --------------------------------------------------------------------------------
 
+-- Email:
+
 type EmailChannel = Chan Mail
+
+--------------------------------------------------------------------------------
+
+-- Environment:
+
+data Environment = MkEnvironment {
+    envConnectionPool   :: ConnectionPool,
+    envJWTConfig        :: JWTSettings,
+    envCookieConfig     :: CookieSettings,
+    envEmailChannel     :: EmailChannel,
+    envEmailDefaultFrom :: Address
+}
 
 --------------------------------------------------------------------------------

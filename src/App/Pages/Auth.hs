@@ -16,19 +16,31 @@ module App.Pages.Auth (
 
 --------------------------------------------------------------------------------
 
-import Text.Hamlet       ( Html )
+import Control.Monad.IO.Class ( liftIO )
+import Control.Monad.Reader   ( ask )
 
-import Servant           ( (:>) )
+import Servant
+import Servant.Auth.Server    ( SetCookie, acceptLogin )
+import Servant.HTML.Blaze     ( HTML )
+
+import Text.Hamlet            ( Html )
 
 import App.Types.Common
-import App.Types.Monad
 import App.Types.Routing
 import App.UI
 import App.UI.Form
+import App.Util.Error
 
 --------------------------------------------------------------------------------
 
-type AuthAPI = "login" :> Webpage
+type AuthAPI = "login" :> ( Webpage
+                       :<|> Post '[HTML] (AuthCookies Html)
+                          )
+
+type AuthCookies a = Headers '[ Header "Set-Cookie" SetCookie
+                              , Header "Set-Cookie" SetCookie
+                              ]
+                             a
 
 loginPage :: AppHandler Html
 loginPage = makePage "Login" (pure Login) $(hamletFile "login")
@@ -37,7 +49,16 @@ loginPage = makePage "Login" (pure Login) $(hamletFile "login")
               , MkFormElement "password" $ TextInput Password "Password" Nothing
               ]
 
+loginPost :: AppHandler (AuthCookies Html)
+loginPost = do
+    env <- ask
+    mApplyCookies <- liftIO $ acceptLogin (envCookieConfig env)
+                                          (envJWTConfig env)
+                                          (0 :: Int)
+
+    maybe error401 (<$> loginPage) mApplyCookies
+
 authHandlers :: AppServer AuthAPI
-authHandlers = loginPage
+authHandlers = loginPage :<|> loginPost
 
 --------------------------------------------------------------------------------

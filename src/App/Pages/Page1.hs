@@ -7,32 +7,34 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App (
-    AppAPI,
-    appHandlers
+{-# LANGUAGE TemplateHaskell #-}
+
+module App.Pages.Page1 (
+    Page1API,
+    page1Handlers
 ) where
 
 --------------------------------------------------------------------------------
 
-import Servant
+import Servant           ( (:>) )
 
-import App.Pages.Auth   ( AuthAPI, authHandlers )
-import App.Pages.Home   ( HomeAPI, homeHandlers )
-import App.Pages.Page1  ( Page1API, page1Handlers )
-import App.Types.Common ( AppServer )
+import Text.Hamlet       ( Html )
+
+import App.Types.Common
+import App.Types.Routing
+import App.UI
+import App.Util.Auth
+import App.Util.Error
 
 --------------------------------------------------------------------------------
 
-type AppAPI =
-      HomeAPI
- :<|> "page1" :> Page1API
- :<|> "auth" :> AuthAPI
- :<|> "static" :> Raw
+type Page1API = RequireAuth :> Webpage
 
-appHandlers :: AppServer AppAPI
-appHandlers = homeHandlers
-         :<|> page1Handlers
-         :<|> authHandlers
-         :<|> serveDirectoryWebApp "static/"
+page1 :: AppHandlerAuth Html
+page1 = requireLoggedIn $ \_ -> do
+    makePage "Page 1" (pure Page1) $(hamletFile "page1")
+
+page1Handlers :: AppServer Page1API
+page1Handlers = page1
 
 --------------------------------------------------------------------------------

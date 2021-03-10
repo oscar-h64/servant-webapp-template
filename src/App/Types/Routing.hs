@@ -23,7 +23,7 @@ import Data.Text ( Text )
 data ShowInNav = Always | OnlyWhenAuthed | Never
     deriving Eq
 
-data Page = Home | Login
+data Page = Home | Page1 | Login
     deriving (Eq, Enum, Bounded)
 
 data PageData = MkPageData {
@@ -35,6 +35,7 @@ data PageData = MkPageData {
 
 pageData :: Page -> PageData
 pageData Home  = MkPageData Always "Home" "/" []
+pageData Page1 = MkPageData Always "Page 1" "/page1" []
 pageData Login = MkPageData Never "Login" "/auth/login" []
 
 --------------------------------------------------------------------------------

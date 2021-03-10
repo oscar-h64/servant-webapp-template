@@ -7,23 +7,21 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App.Types.Monad (
-    AppHandler,
-    AppServer
+module App.Util.Auth (
+    requireLoggedIn
 ) where
 
 --------------------------------------------------------------------------------
 
-import Control.Monad.Trans.Reader ( ReaderT )
+import Servant.Auth.Server ( AuthResult (..) )
 
-import Servant.Server             ( Handler, HasServer (ServerT) )
-
-import App.Types.Environment      ( Environment )
+import App.Types.Common    ( AppHandler, AppServer )
+import App.Util.Error      ( error401 )
 
 --------------------------------------------------------------------------------
 
-type AppHandler = ReaderT Environment Handler
-
-type AppServer api = ServerT api AppHandler
+requireLoggedIn :: (a -> AppHandler b) -> AuthResult a -> AppHandler b
+requireLoggedIn f (Authenticated a) = f a
+requireLoggedIn _ _                 = error401
 
 --------------------------------------------------------------------------------

@@ -10,11 +10,15 @@
 module App.Types.Common (
     JSONStripPrefix,
 
+    getUser,
+    getEnv,
+    askEnv,
     AppHandler,
+    EndpointHandler,
     AppServer,
 
-    RequireAuth,
-    AppHandlerAuth,
+    AuthedUser,
+    AppAuth,
 
     Webpage,
     Webpage',
@@ -29,7 +33,7 @@ module App.Types.Common (
 --------------------------------------------------------------------------------
 
 import Control.Concurrent          ( Chan )
-import Control.Monad.Trans.Reader  ( ReaderT )
+import Control.Monad.Reader        ( ReaderT, asks )
 
 import Database.Persist.Postgresql ( ConnectionPool )
 
@@ -63,7 +67,18 @@ type JSONStripPrefix (str :: Symbol) =
 
 -- Monads:
 
-type AppHandler = ReaderT Environment Handler
+getUser :: AppHandler (Maybe AuthedUser)
+getUser = asks fst
+
+getEnv :: AppHandler Environment
+getEnv = asks snd
+
+askEnv :: (Environment -> b) -> AppHandler b
+askEnv f = asks (f . snd)
+
+type EndpointHandler a = AuthResult AuthedUser -> AppHandler a
+
+type AppHandler = ReaderT (Maybe AuthedUser, Environment) Handler
 
 type AppServer api = ServerT api AppHandler
 
@@ -71,10 +86,9 @@ type AppServer api = ServerT api AppHandler
 
 -- Auth:
 
-type RequireAuth = Auth '[Cookie] Int
+type AuthedUser = Int
 
--- The RequireAuth combinator should go last in order to use AppHandlerAuth
-type AppHandlerAuth a = AuthResult Int -> AppHandler a
+type AppAuth = Auth '[Cookie] AuthedUser
 
 instance FromJWT Int
 instance ToJWT Int
@@ -84,11 +98,11 @@ instance ToJWT Int
 -- Routing: These are quick aliases for use in API types. The ' versions allow
 -- specifying a custom return type, which is useful for adding headers etc.
 
-type Webpage = Get '[HTML] Html
-type Webpage' a = Get '[HTML] a
+type Webpage = AppAuth :> Get '[HTML] Html
+type Webpage' a = AppAuth :> Get '[HTML] a
 
-type Redirect = Verb POST 303 '[HTML] NoContent
-type Redirect' a = Verb POST 303 '[HTML] a
+type Redirect = AppAuth :> Verb POST 303 '[HTML] NoContent
+type Redirect' a = AppAuth :> Verb POST 303 '[HTML] a
 
 --------------------------------------------------------------------------------
 

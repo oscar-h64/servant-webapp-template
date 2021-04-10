@@ -76,7 +76,6 @@ library
     , shakespeare
     , smtp-mail
     , text
-    , transformers
     , uuid
     , wai-enforce-https
     , warp
@@ -127,7 +126,6 @@ executable servant-webapp-template
     , shakespeare
     , smtp-mail
     , text
-    , transformers
     , uuid
     , wai-enforce-https
     , warp

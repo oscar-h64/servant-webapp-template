@@ -19,12 +19,14 @@ module App.Pages.Home (
 import App.Types.Common
 import App.Types.Routing
 import App.UI
+import App.Util.Auth
 
 --------------------------------------------------------------------------------
 
 type HomeAPI = Webpage
 
 homeHandlers :: AppServer HomeAPI
-homeHandlers = makePage "Home" (pure Home) $(hamletFile "home")
+homeHandlers = authNotRequired
+             $ makePage "Home" (pure Home) $(hamletFile "home")
 
 --------------------------------------------------------------------------------

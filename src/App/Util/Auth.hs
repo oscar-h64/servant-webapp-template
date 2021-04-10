@@ -8,20 +8,34 @@
 --------------------------------------------------------------------------------
 
 module App.Util.Auth (
+    authNotRequired,
     requireLoggedIn
 ) where
 
 --------------------------------------------------------------------------------
 
-import Servant.Auth.Server ( AuthResult (..) )
+import Control.Monad.Reader
 
-import App.Types.Common    ( AppHandler, AppServer )
-import App.Util.Error      ( error401 )
+import Servant.Auth.Server  ( AuthResult (..) )
+
+import App.Types.Common     ( AppHandler, AuthedUser, EndpointHandler, getEnv )
+import App.Util.Error       ( error401 )
 
 --------------------------------------------------------------------------------
 
-requireLoggedIn :: (a -> AppHandler b) -> AuthResult a -> AppHandler b
-requireLoggedIn f (Authenticated a) = f a
+authResultToMaybe :: AuthResult a -> Maybe a
+authResultToMaybe (Authenticated a) = Just a
+authResultToMaybe _                 = Nothing
+
+authNotRequired :: AppHandler b -> EndpointHandler b
+authNotRequired f authRes = do
+    env <- getEnv
+    lift $ runReaderT f (authResultToMaybe authRes, env)
+
+requireLoggedIn :: (AuthedUser -> AppHandler b) -> EndpointHandler b
+requireLoggedIn f (Authenticated a) = do
+    env <- getEnv
+    lift $ runReaderT (f a) (Just a, env)
 requireLoggedIn _ _                 = error401
 
 --------------------------------------------------------------------------------

@@ -28,9 +28,9 @@ import App.Util.Error
 
 --------------------------------------------------------------------------------
 
-type Page1API = RequireAuth :> Webpage
+type Page1API = Webpage
 
-page1 :: AppHandlerAuth Html
+page1 :: EndpointHandler Html
 page1 = requireLoggedIn $ \_ -> do
     makePage "Page 1" (pure Page1) $(hamletFile "page1")
 

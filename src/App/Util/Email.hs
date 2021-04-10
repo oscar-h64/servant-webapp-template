@@ -21,7 +21,7 @@ module App.Util.Email (
 
 import Control.Concurrent            ( readChan, writeChan )
 import Control.Monad                 ( forever )
-import Control.Monad.Reader          ( MonadIO (liftIO), asks )
+import Control.Monad.Reader          ( MonadIO (liftIO) )
 
 import Data.Maybe                    ( fromMaybe, maybeToList )
 import Data.Text                     ( Text )
@@ -35,7 +35,7 @@ import Text.Blaze.Html.Renderer.Text ( renderHtml )
 import Text.Hamlet                   ( Html, HtmlUrl )
 
 import App.Types.Common              ( AppHandler, EmailChannel,
-                                       Environment (..) )
+                                       Environment (..), askEnv )
 import App.Types.Config              ( SMTPConfig (..) )
 import App.Types.Routing             ( Page, PageData (..), getPagePath )
 
@@ -73,7 +73,7 @@ sendEmailWithAttachments :: Address
                          -> Attachments
                          -> AppHandler ()
 sendEmailWithAttachments to subject textPart mHtmlPart atts = do
-    from <- asks envEmailDefaultFrom
+    from <- askEnv envEmailDefaultFrom
     sendEmailFromWithAttachments from to subject textPart mHtmlPart atts
 
 sendEmailFromWithAttachments :: Address
@@ -84,7 +84,7 @@ sendEmailFromWithAttachments :: Address
                              -> Attachments
                              -> AppHandler ()
 sendEmailFromWithAttachments from to subject textPart mHtmlPart atts = do
-    emailChan <- asks envEmailChannel
+    emailChan <- askEnv envEmailChannel
 
     let mHtmlLazy = htmlPart . renderHtml <$> mHtmlPart
     let parts = plainPart (fromStrict textPart) : maybeToList mHtmlLazy

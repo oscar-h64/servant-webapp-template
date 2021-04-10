@@ -17,7 +17,6 @@ module App.Pages.Auth (
 --------------------------------------------------------------------------------
 
 import Control.Monad.IO.Class ( liftIO )
-import Control.Monad.Reader   ( ask )
 
 import Data.Text              ( Text )
 
@@ -31,17 +30,16 @@ import App.Types.Common
 import App.Types.Routing
 import App.UI
 import App.UI.Form
+import App.Util.Auth
 import App.Util.Error
 
 --------------------------------------------------------------------------------
 
--- TODO: Cleanup this file
+type AuthAPI = "login" :> LoginAPI
 
-type AuthAPI = "login" :> ( RequireAuth :> Webpage
-                       :<|> Redirect' (AuthCookies '[Header "Location" Text]
-                                                   NoContent
-                                      )
-                          )
+type LoginAPI =
+      Webpage
+ :<|> Redirect' (AuthCookies '[Header "Location" Text] NoContent)
 
 type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
                                  ': Header "Set-Cookie" SetCookie
@@ -50,7 +48,7 @@ type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
                                 a
 
 
-handleLoginPage :: AppHandlerAuth Html
+handleLoginPage :: EndpointHandler Html
 handleLoginPage (Authenticated _) = redirect Home
 handleLoginPage _                 = loginPage
 
@@ -63,9 +61,9 @@ loginPage =
     in makePage "Login" (pure Login) $(hamletFile "login")
 
 -- Temporary login endpoint - just logs in anyone that POSTs here
-loginPost :: AppHandler (AuthCookies '[Header "Location" Text] NoContent)
-loginPost = do
-    env <- ask
+loginPost :: EndpointHandler (AuthCookies '[Header "Location" Text] NoContent)
+loginPost = authNotRequired $ do
+    env <- getEnv
     mApplyCookies <- liftIO $ acceptLogin (envCookieConfig env)
                                           (envJWTConfig env)
                                           (0 :: Int)

@@ -41,7 +41,6 @@ dependencies:
 - shakespeare
 - smtp-mail
 - text
-- transformers
 - uuid
 - wai-enforce-https
 - warp

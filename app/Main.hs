@@ -14,7 +14,7 @@ module Main where
 import Control.Concurrent                  ( forkIO, newChan )
 import Control.Monad                       ( forM_, void, when )
 import Control.Monad.Logger                ( runStderrLoggingT )
-import Control.Monad.Trans.Reader          ( runReaderT )
+import Control.Monad.Reader                ( runReaderT )
 
 import Data.Maybe                          ( fromJust, fromMaybe, listToMaybe )
 import Data.Proxy                          ( Proxy (..) )
@@ -56,7 +56,7 @@ appToServer :: Environment -> Server AppAPI
 appToServer cfg = hoistServerWithContext
     (Proxy @AppAPI)
     (Proxy @'[CookieSettings, JWTSettings])
-    (`runReaderT` cfg)
+    (`runReaderT` (Nothing, cfg))
     appHandlers
 
 -- | Entrypoint for server

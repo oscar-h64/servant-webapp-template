@@ -57,5 +57,5 @@ Run the app with `stack run`. There are 2 options that can be passed:
 - Rearrange some modules - in particular:
     - `App.Types.Routing` is not just types
 - Potentially add a re-export module to simplify imports
-- Email support
+- Email support (documenation)
 - Logging

@@ -7,8 +7,12 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-{-# LANGUAGE QuasiQuotes     #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 module App.Types.Database (
     module ReExport,
@@ -41,9 +45,9 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 --------------------------------------------------------------------------------
 
 instance PersistField UUID where
-    toPersistValue = PersistDbSpecific . BS.pack . toString
+    toPersistValue = PersistLiteralEscaped . BS.pack . toString
 
-    fromPersistValue (PersistDbSpecific bs) =
+    fromPersistValue (PersistLiteralEscaped bs) =
         case fromString $ BS.unpack bs of
             Just uuid -> Right uuid
             Nothing   -> Left "Invalid UUID"

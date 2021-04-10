@@ -25,7 +25,7 @@ import Data.Yaml                           ( decodeFileThrow )
 import Database.Persist.Postgresql         ( createPostgresqlPool, runMigration,
                                              runSqlPool )
 
-import Network.Mail.Mime                   ( Address(..) )
+import Network.Mail.Mime                   ( Address (..) )
 import Network.Wai.Handler.Warp            ( defaultSettings, run, setPort )
 import Network.Wai.Handler.WarpTLS         ( runTLS, tlsSettings )
 import Network.Wai.Middleware.EnforceHTTPS
@@ -98,7 +98,7 @@ main = do
 
     -- The default from address to use. If there is no SMTP config we just use
     -- default@app since its only outputted to stdout in this case
-    let emailDefaultFrom = fromMaybe (Address Nothing "default@app") 
+    let emailDefaultFrom = fromMaybe (Address Nothing "default@app")
                          $ cfgSmtp >>= smtpDefaultFrom
 
     -- Create basic app

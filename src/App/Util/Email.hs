@@ -21,13 +21,13 @@ module App.Util.Email (
 
 import Control.Concurrent            ( readChan, writeChan )
 import Control.Monad                 ( forever )
-import Control.Monad.Reader          ( MonadIO(liftIO), asks )
+import Control.Monad.Reader          ( MonadIO (liftIO), asks )
 
 import Data.Maybe                    ( fromMaybe, maybeToList )
 import Data.Text                     ( Text )
 import Data.Text.Lazy                ( fromStrict )
 
-import Network.Mail.Mime             ( Address(..), addAttachments, htmlPart,
+import Network.Mail.Mime             ( Address (..), addAttachments, htmlPart,
                                        plainPart )
 import Network.Mail.SMTP             ( sendMailWithLoginTLS, simpleMail )
 
@@ -35,10 +35,10 @@ import Text.Blaze.Html.Renderer.Text ( renderHtml )
 import Text.Hamlet                   ( Html, HtmlUrl )
 
 import App.Types.Common              ( EmailChannel )
-import App.Types.Config              ( SMTPConfig(..) )
-import App.Types.Environment         ( Environment(..) )
+import App.Types.Config              ( SMTPConfig (..) )
+import App.Types.Environment         ( Environment (..) )
 import App.Types.Monad               ( AppHandler )
-import App.Types.Routing             ( Page, PageData(..), pageData )
+import App.Types.Routing             ( Page, PageData (..), pageData )
 
 --------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ type Attachments = [(Text, FilePath)]
 
 --------------------------------------------------------------------------------
 
--- Emails can be rendered from templates. Use: 
+-- Emails can be rendered from templates. Use:
 -- sendEmail to subject plainText $ emailTemplate $(hamletFile "emails/example")
 
 emailTemplate :: HtmlUrl Page -> Maybe Html

@@ -21,10 +21,10 @@ module App.Types.Config (
 
 import Data.Text           ( Text )
 
-import Data.Aeson          ( (.:), (.:?), withObject, FromJSON(..) )
+import Data.Aeson          ( FromJSON (..), withObject, (.:), (.:?) )
 import Deriving.Aeson      ( CustomJSON (..), FromJSON, Generic )
 
-import Network.Mail.SMTP   ( Address(Address) )
+import Network.Mail.SMTP   ( Address (Address) )
 
 import Options.Applicative
 

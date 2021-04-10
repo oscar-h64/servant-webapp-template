@@ -3,32 +3,32 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages:
-- completed:
-    hackage: blaze-colonnade-1.2.2.1@sha256:e3c606b5695dcc680dbecd42d23008ba18c6d3cf272639d62857d5118dac112d,1394
-    pantry-tree:
-      size: 279
-      sha256: 14989a3fe4813e0148fae583e209e724db3ba554e2455348e0f54b8f709bd4fe
-  original:
-    hackage: blaze-colonnade-1.2.2.1@sha256:e3c606b5695dcc680dbecd42d23008ba18c6d3cf272639d62857d5118dac112d,1394
-- completed:
-    hackage: colonnade-1.2.0.2@sha256:c95c2ecff5cfa28c736d8fa662d28b71129f67457068e3f4467b296a621607ab,2099
-    pantry-tree:
-      size: 327
-      sha256: 98ccdd327916e0ff0ea2fa93ff9a96f5d492ae88258b330e991e6dcc4d332496
-  original:
-    hackage: colonnade-1.2.0.2@sha256:c95c2ecff5cfa28c736d8fa662d28b71129f67457068e3f4467b296a621607ab,2099
-- completed:
-    hackage: smtp-mail-0.3.0.0@sha256:2e6d9cb29d09a5a04d77a905eb1b570b94b5654e24d40630ea96aa374474c12f,1239
-    pantry-tree:
-      size: 450
-      sha256: 4d319cb6c22b35ca043a83210cd09bfbf99eec3dca4945cd53ed5b7c96f7daca
-  original:
-    hackage: smtp-mail-0.3.0.0@sha256:2e6d9cb29d09a5a04d77a905eb1b570b94b5654e24d40630ea96aa374474c12f,1239
 snapshots:
-- completed:
-    size: 534126
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/31.yaml
-    sha256: 637fb77049b25560622a224845b7acfe81a09fdb6a96a3c75997a10b651667f6
-  original:
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/31.yaml
+- original:
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/9.yaml
+  completed:
+    sha256: d7d8d5106e53d1669964bd8bd2b0f88a5ad192d772f5376384b76738fd992311
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/9.yaml
+    size: 567037
+packages:
+- original:
+    hackage: blaze-colonnade-1.2.2.1@sha256:e3c606b5695dcc680dbecd42d23008ba18c6d3cf272639d62857d5118dac112d,1394
+  completed:
+    pantry-tree:
+      sha256: 14989a3fe4813e0148fae583e209e724db3ba554e2455348e0f54b8f709bd4fe
+      size: 279
+    hackage: blaze-colonnade-1.2.2.1@sha256:e3c606b5695dcc680dbecd42d23008ba18c6d3cf272639d62857d5118dac112d,1394
+- original:
+    hackage: colonnade-1.2.0.2@sha256:c95c2ecff5cfa28c736d8fa662d28b71129f67457068e3f4467b296a621607ab,2099
+  completed:
+    pantry-tree:
+      sha256: 98ccdd327916e0ff0ea2fa93ff9a96f5d492ae88258b330e991e6dcc4d332496
+      size: 327
+    hackage: colonnade-1.2.0.2@sha256:c95c2ecff5cfa28c736d8fa662d28b71129f67457068e3f4467b296a621607ab,2099
+- original:
+    hackage: smtp-mail-0.3.0.0@sha256:2e6d9cb29d09a5a04d77a905eb1b570b94b5654e24d40630ea96aa374474c12f,1239
+  completed:
+    pantry-tree:
+      sha256: 4d319cb6c22b35ca043a83210cd09bfbf99eec3dca4945cd53ed5b7c96f7daca
+      size: 450
+    hackage: smtp-mail-0.3.0.0@sha256:2e6d9cb29d09a5a04d77a905eb1b570b94b5654e24d40630ea96aa374474c12f,1239

@@ -51,7 +51,6 @@ Run the app with `stack run`. There are 2 options that can be passed:
 **Page building:**
 - Add more form elements
 - Make forms (and pages in general) accessible
-- Add helper for tables
 
 **General:**
 - Rearrange some modules - in particular:

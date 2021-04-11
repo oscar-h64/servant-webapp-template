@@ -11,18 +11,19 @@
 
 module App.Util.Error (
     error401,
-    error403
+    error403,
+    notFoundFormatter
 ) where
 
 --------------------------------------------------------------------------------
 
-import Servant                  ( ServerError (..), err401, err403, throwError )
+import Servant
 
 import Text.Blaze.Renderer.Utf8 ( renderMarkup )
 
 import App.Types.Common         ( AppHandler, AppServer )
 import App.Types.Routing        ( Page (..) )
-import App.UI                   ( hamletFile, makePage, redirect )
+import App.UI                   ( hamletFile, makePage, makePage', redirect )
 
 --------------------------------------------------------------------------------
 
@@ -33,5 +34,10 @@ error403 :: Maybe Page -> AppHandler a
 error403 mPage = do
     page <- makePage "Permission Denied" mPage $(hamletFile "errors/403")
     throwError $ err403 { errBody = renderMarkup page }
+
+notFoundFormatter :: NotFoundErrorFormatter
+notFoundFormatter _ =
+    let page = makePage' "Not Found" Nothing $(hamletFile "errors/404") Nothing
+    in err404 { errBody = renderMarkup page }
 
 --------------------------------------------------------------------------------

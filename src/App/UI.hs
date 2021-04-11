@@ -12,6 +12,7 @@
 module App.UI (
     hamletFile,
     makePage,
+    makePage',
     redirect,
     redirect'
 ) where
@@ -28,7 +29,7 @@ import           Servant            ( ServerError (errHeaders), err303,
 import           Text.Hamlet        ( Html, HtmlUrl )
 import qualified Text.Hamlet        as H ( hamletFile )
 
-import           App.Types.Common   ( AppHandler, getUser )
+import           App.Types.Common   ( AppHandler, AuthedUser, getUser )
 import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
                                       getPagePath, pageData )
 
@@ -37,9 +38,10 @@ import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
 hamletFile p = H.hamletFile $ "templates/" <> p <> ".hamlet"
 
 makePage :: Text -> Maybe Page -> HtmlUrl Page -> AppHandler Html
-makePage title mPage pageContent = do
-    mUser <- getUser
+makePage title mPage pageContent = makePage' title mPage pageContent <$> getUser
 
+makePage' :: Text -> Maybe Page -> HtmlUrl Page -> Maybe AuthedUser -> Html
+makePage' title mPage pageContent mUser =
     let renderFunc page _ = getPagePath page
         showNavItem y = pdShowInNav y == Always
                      || (isJust mUser && pdShowInNav y == OnlyWhenAuthed)
@@ -47,8 +49,7 @@ makePage title mPage pageContent = do
                           , let y = pageData x
                           , showNavItem y
                    ]
-
-    pure $ $(H.hamletFile "templates/base/layout.hamlet") renderFunc
+    in $(H.hamletFile "templates/base/layout.hamlet") renderFunc
 
 -- | `redirect` @page@ short circuits the AppHandler monad, throwing an HTTP303
 -- response which redirects to the page @page@

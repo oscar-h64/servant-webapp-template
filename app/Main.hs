@@ -32,9 +32,7 @@ import Network.Wai.Middleware.EnforceHTTPS
 
 import Options.Applicative                 ( execParser )
 
-import Servant                             ( Context (EmptyContext, (:.)),
-                                             Server, hoistServerWithContext,
-                                             serveWithContext )
+import Servant
 import Servant.Auth.Server                 ( CookieSettings, JWTSettings,
                                              SameSite (SameSiteStrict),
                                              cookieSameSite, cookieXsrfSetting,
@@ -48,6 +46,7 @@ import App.Types.Common
 import App.Types.Config
 import App.Types.Database                  ( migrateAll )
 import App.Util.Email                      ( emailThread )
+import App.Util.Error                      ( notFoundFormatter )
 
 --------------------------------------------------------------------------------
 
@@ -55,7 +54,7 @@ import App.Util.Email                      ( emailThread )
 appToServer :: Environment -> Server AppAPI
 appToServer cfg = hoistServerWithContext
     (Proxy @AppAPI)
-    (Proxy @'[CookieSettings, JWTSettings])
+    (Proxy @'[ErrorFormatters, CookieSettings, JWTSettings])
     (`runReaderT` (Nothing, cfg))
     appHandlers
 
@@ -83,6 +82,10 @@ main = do
     -- run automatic migrations
     when shouldMigrate $ runSqlPool (runMigration migrateAll) sqlPool
 
+    -- generate error formatters
+    let customFormatters =
+            defaultErrorFormatters{ notFoundErrorFormatter = notFoundFormatter }
+
     -- generate config for JWT/cookie
     jwtKey <- readKey serverJwtKey
     let jwtCfg = defaultJWTSettings jwtKey
@@ -90,7 +93,9 @@ main = do
             cookieSameSite = SameSiteStrict,
             cookieXsrfSetting = Nothing
         }
-    let cfg = cookieCfg :. jwtCfg :. EmptyContext
+
+    -- create servant context
+    let ctx = customFormatters :. cookieCfg :. jwtCfg :. EmptyContext
 
     -- Start the email thread if the SMTP config is set
     emailChan <- newChan
@@ -102,7 +107,7 @@ main = do
                          $ cfgSmtp >>= smtpDefaultFrom
 
     -- Create basic app
-    let app = serveWithContext (Proxy @AppAPI) cfg
+    let app = serveWithContext (Proxy @AppAPI) ctx
             $ appToServer
             $ MkEnvironment sqlPool jwtCfg cookieCfg emailChan emailDefaultFrom
 

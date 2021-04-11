@@ -34,6 +34,7 @@ library
       App.Types.Routing
       App.UI
       App.UI.Form
+      App.UI.Table
       App.Util.Auth
       App.Util.Email
       App.Util.Error

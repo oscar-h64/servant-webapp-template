@@ -18,6 +18,7 @@ module App.UI (
 
 --------------------------------------------------------------------------------
 
+import           Data.Maybe         ( fromMaybe, isJust )
 import           Data.Text          ( Text )
 import           Data.Text.Encoding ( encodeUtf8 )
 
@@ -27,7 +28,7 @@ import           Servant            ( ServerError (errHeaders), err303,
 import           Text.Hamlet        ( Html, HtmlUrl )
 import qualified Text.Hamlet        as H ( hamletFile )
 
-import           App.Types.Common   ( AppHandler )
+import           App.Types.Common   ( AppHandler, getUser )
 import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
                                       getPagePath, pageData )
 
@@ -36,13 +37,18 @@ import           App.Types.Routing  ( Page (..), PageData (..), ShowInNav (..),
 hamletFile p = H.hamletFile $ "templates/" <> p <> ".hamlet"
 
 makePage :: Text -> Maybe Page -> HtmlUrl Page -> AppHandler Html
-makePage title mPage pageContent =
+makePage title mPage pageContent = do
+    mUser <- getUser
+
     let renderFunc page _ = getPagePath page
+        showNavItem y = pdShowInNav y == Always
+                     || (isJust mUser && pdShowInNav y == OnlyWhenAuthed)
         navItems = [(x,y) | x <- [minBound..maxBound]
                           , let y = pageData x
-                          , pdShowInNav y == Always
+                          , showNavItem y
                    ]
-    in pure $ $(H.hamletFile "templates/base/layout.hamlet") renderFunc
+
+    pure $ $(H.hamletFile "templates/base/layout.hamlet") renderFunc
 
 -- | `redirect` @page@ short circuits the AppHandler monad, throwing an HTTP303
 -- response which redirects to the page @page@

@@ -27,6 +27,7 @@ dependencies:
 - bytestring
 - colonnade
 - deriving-aeson
+- http-api-data
 - mime-mail
 - monad-logger
 - mtl

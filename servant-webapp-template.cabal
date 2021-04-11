@@ -37,6 +37,7 @@ library
       App.Util.Auth
       App.Util.Email
       App.Util.Error
+      App.Util.Misc
   other-modules:
       Paths_servant_webapp_template
   hs-source-dirs:
@@ -62,6 +63,7 @@ library
     , bytestring
     , colonnade
     , deriving-aeson
+    , http-api-data
     , mime-mail
     , monad-logger
     , mtl
@@ -111,6 +113,7 @@ executable servant-webapp-template
     , bytestring
     , colonnade
     , deriving-aeson
+    , http-api-data
     , mime-mail
     , monad-logger
     , mtl

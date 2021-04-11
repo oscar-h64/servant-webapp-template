@@ -7,40 +7,22 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
-module App.Types.Routing (
-    ShowInNav(..),
-    Page(..),
-    PageData(..),
-    pageData,
-    getPagePath
+module App.Util.Misc (
+    ensureRelativeUrl
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.Text ( Text )
+import Data.Text
+
+import App.Types.Common ( AppHandler )
 
 --------------------------------------------------------------------------------
 
-data ShowInNav = Always | OnlyWhenAuthed | Never
-    deriving Eq
-
-data Page = Home | Page1 | Login | Logout
-    deriving (Eq, Enum, Bounded)
-
-data PageData = MkPageData {
-    pdShowInNav :: ShowInNav,
-    pdNavName   :: Text,
-    pdPath      :: Text,
-    pdSubpages  :: [Page]
-}
-
-pageData :: Page -> PageData
-pageData Home   = MkPageData Always "Home" "/" []
-pageData Page1  = MkPageData OnlyWhenAuthed "Page 1" "/page1" []
-pageData Login  = MkPageData Never "Login" "/auth/login" []
-pageData Logout = MkPageData Never "Logout" "/auth/logout" []
-
-getPagePath :: Page -> Text
-getPagePath = pdPath . pageData
+ensureRelativeUrl :: Text -> Text -> Text
+ensureRelativeUrl defaultUrl url =
+    if "//" `isInfixOf` url
+    then defaultUrl
+    else url
 
 --------------------------------------------------------------------------------

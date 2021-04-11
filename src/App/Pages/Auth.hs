@@ -21,10 +21,13 @@ import Control.Monad.IO.Class ( liftIO )
 import Data.Text              ( Text )
 
 import Servant
-import Servant.Auth.Server    ( AuthResult (..), SetCookie, acceptLogin )
+import Servant.Auth.Server    ( AuthResult (..), SetCookie, acceptLogin,
+                                clearSession )
 import Servant.HTML.Blaze     ( HTML )
 
 import Text.Hamlet            ( Html )
+
+import Web.FormUrlEncoded
 
 import App.Types.Common
 import App.Types.Routing
@@ -32,14 +35,21 @@ import App.UI
 import App.UI.Form
 import App.Util.Auth
 import App.Util.Error
+import App.Util.Misc
 
 --------------------------------------------------------------------------------
 
-type AuthAPI = "login" :> LoginAPI
+type AuthAPI =
+      "login" :> LoginAPI
+ :<|> "logout" :> LogoutAPI
 
 type LoginAPI =
       Webpage
  :<|> Redirect' (AuthCookies '[Header "Location" Text] NoContent)
+
+type LogoutAPI =
+      ReqBody '[FormUrlEncoded] LogoutForm :>
+      Redirect' (AuthCookies '[Header "Location" Text] NoContent)
 
 type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
                                  ': Header "Set-Cookie" SetCookie
@@ -47,6 +57,7 @@ type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
                                 )
                                 a
 
+--------------------------------------------------------------------------------
 
 handleLoginPage :: EndpointHandler Html
 handleLoginPage (Authenticated _) = redirect Home
@@ -71,7 +82,23 @@ loginPost = authNotRequired $ do
     applyAuthCookies <- maybe error401 pure mApplyCookies
     pure $ applyAuthCookies $ addHeader (getPagePath Home) NoContent
 
+--------------------------------------------------------------------------------
+
+newtype LogoutForm = MkLogoutForm { logoutRedirectUrl :: Text }
+
+instance FromForm LogoutForm where
+    fromForm = fmap (MkLogoutForm . ensureRelativeUrl (getPagePath Home))
+             . parseUnique "redirectUrl"
+
+logoutPost :: LogoutForm
+           -> EndpointHandler (AuthCookies '[Header "Location" Text] NoContent)
+logoutPost MkLogoutForm{..} = requireLoggedIn $ \_ -> do
+    cookieConf <- askEnv envCookieConfig
+    pure $ clearSession cookieConf $ addHeader logoutRedirectUrl NoContent
+
+--------------------------------------------------------------------------------
+
 authHandlers :: AppServer AuthAPI
-authHandlers = handleLoginPage :<|> loginPost
+authHandlers = (handleLoginPage :<|> loginPost) :<|> logoutPost
 
 --------------------------------------------------------------------------------

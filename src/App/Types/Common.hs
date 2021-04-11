@@ -35,6 +35,8 @@ module App.Types.Common (
 import Control.Concurrent          ( Chan )
 import Control.Monad.Reader        ( ReaderT, asks )
 
+import Data.Text
+
 import Database.Persist.Postgresql ( ConnectionPool )
 
 import Deriving.Aeson              ( CamelToKebab, CustomJSON,
@@ -101,7 +103,8 @@ instance ToJWT Int
 type Webpage = AppAuth :> Get '[HTML] Html
 type Webpage' a = AppAuth :> Get '[HTML] a
 
-type Redirect = AppAuth :> Verb POST 303 '[HTML] NoContent
+type Redirect = AppAuth :> Verb POST 303 '[HTML]
+                            (Headers '[Header "Location" Text] NoContent)
 type Redirect' a = AppAuth :> Verb POST 303 '[HTML] a
 
 --------------------------------------------------------------------------------

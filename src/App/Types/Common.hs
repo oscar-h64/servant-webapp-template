@@ -7,6 +7,8 @@
 -- Copyright 2020 Oscar Harris (oscar@oscar-h.com)                            --
 --------------------------------------------------------------------------------
 
+{-# LANGUAGE FlexibleInstances #-}
+
 module App.Types.Common (
     JSONStripPrefix,
 
@@ -56,6 +58,8 @@ import Servant.Server              ( Handler, HasServer (ServerT) )
 
 import Text.Hamlet                 ( Html )
 
+import App.Types.Database          ( HasDBConn (..) )
+
 --------------------------------------------------------------------------------
 
 -- JSON:
@@ -83,6 +87,9 @@ type EndpointHandler a = AuthResult AuthedUser -> AppHandler a
 type AppHandler = ReaderT (Maybe AuthedUser, Environment) Handler
 
 type AppServer api = ServerT api AppHandler
+
+instance HasDBConn AppHandler where
+    getPool = askEnv envConnectionPool
 
 --------------------------------------------------------------------------------
 

@@ -4,6 +4,6 @@
             $of TextInput textType label mValue
                 <div .mb-3>
                     <label for="#{mconcat [name, "-", itemName]}" .form-label>#{label}
-                    <input .form-control type="#{textTypeToInputType textType}" id="#{mconcat [name, "-", itemName]}" *{maybeToAttrib "value" mValue} />
+                    <input .form-control type="#{textTypeToInputType textType}" id="#{mconcat [name, "-", itemName]}" name="#{itemName}" *{maybeToAttrib "value" mValue} />
     <!-- DO CSRF -->
     <input type=submit value="#{fromMaybe "Submit" mSubmitVal}" .w-100 .btn .btn-success />

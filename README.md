@@ -43,7 +43,7 @@ Run the app with `stack run`. There are 2 options that can be passed:
 ## TODO:
 
 **Auth:**
-- Everything
+- Simple way to use OAuth/SAML
 
 **Documentation:**
 - Most things

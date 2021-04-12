@@ -61,10 +61,7 @@ type AuthCookies hs a = Headers (   Header "Set-Cookie" SetCookie
 
 handleLoginPage :: EndpointHandler Html
 handleLoginPage (Authenticated _) = redirect Home
-handleLoginPage _                 = loginPage
-
-loginPage :: AppHandler Html
-loginPage =
+handleLoginPage _                 =
     let loginForm = renderForm $ MkForm "loginForm" (Just "Login")
             [ MkFormElement "username" $ TextInput Plain    "Username" Nothing
             , MkFormElement "password" $ TextInput Password "Password" Nothing

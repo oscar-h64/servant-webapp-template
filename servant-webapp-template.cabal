@@ -33,6 +33,7 @@ library
       App.Types.Database
       App.Types.Routing
       App.UI
+      App.UI.Alert
       App.UI.Form
       App.UI.Table
       App.Util.Auth

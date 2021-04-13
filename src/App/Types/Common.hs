@@ -23,6 +23,7 @@ module App.Types.Common (
     AppAuth,
 
     Webpage,
+    WebpageP,
     Webpage',
     Redirect,
     Redirect',
@@ -108,6 +109,7 @@ instance ToJWT Int
 -- specifying a custom return type, which is useful for adding headers etc.
 
 type Webpage = AppAuth :> Get '[HTML] Html
+type WebpageP = AppAuth :> Post '[HTML] Html
 type Webpage' a = AppAuth :> Get '[HTML] a
 
 type Redirect = AppAuth :> Verb POST 303 '[HTML]

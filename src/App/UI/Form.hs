@@ -39,6 +39,7 @@ textTypeToInputType Password = "password"
 
 -- TODO: More form elements
 data FormElementType = TextInput TextType Text (Maybe Text)
+                     | HiddenInput Text
 
 data Form = MkForm Text (Maybe Text) [FormElement] -- Name, Submit button text
 

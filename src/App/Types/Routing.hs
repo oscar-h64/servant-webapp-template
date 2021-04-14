@@ -11,13 +11,14 @@ module App.Types.Routing (
     ShowInNav(..),
     Page(..),
     PageData(..),
-    pageData,
-    getPagePath
+    pageData
 ) where
 
 --------------------------------------------------------------------------------
 
-import Data.Text ( Text )
+import Data.Text        ( Text )
+
+import App.Types.Common
 
 --------------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ pageData Page1  = MkPageData OnlyWhenAuthed "Page 1" "/page1" []
 pageData Login  = MkPageData Never "Login" "/auth/login" []
 pageData Logout = MkPageData Never "Logout" "/auth/logout" []
 
-getPagePath :: Page -> Text
-getPagePath = pdPath . pageData
+instance HasUrl Page where
+    getUrl = pdPath . pageData
 
 --------------------------------------------------------------------------------

@@ -30,7 +30,9 @@ module App.Types.Common (
 
     EmailChannel,
 
-    Environment(..)
+    Environment(..),
+
+    HasUrl(..)
 ) where
 
 --------------------------------------------------------------------------------
@@ -133,5 +135,15 @@ data Environment = MkEnvironment {
     envEmailChannel     :: EmailChannel,
     envEmailDefaultFrom :: Address
 }
+
+--------------------------------------------------------------------------------
+
+-- Misc:
+
+class HasUrl a where
+    getUrl :: a -> Text
+
+instance HasUrl Text where
+    getUrl = id
 
 --------------------------------------------------------------------------------

@@ -34,10 +34,9 @@ import Network.Mail.SMTP             ( sendMailWithLoginTLS, simpleMail )
 import Text.Blaze.Html.Renderer.Text ( renderHtml )
 import Text.Hamlet                   ( Html, HtmlUrl )
 
-import App.Types.Common              ( AppHandler, EmailChannel,
-                                       Environment (..), askEnv )
+import App.Types.Common
 import App.Types.Config              ( SMTPConfig (..) )
-import App.Types.Routing             ( Page, PageData (..), getPagePath )
+import App.Types.Routing             ( Page, PageData (..) )
 
 --------------------------------------------------------------------------------
 
@@ -49,7 +48,7 @@ type Attachments = [(Text, FilePath)]
 -- sendEmail to subject plainText $ emailTemplate $(hamletFile "emails/example")
 
 emailTemplate :: HtmlUrl Page -> Maybe Html
-emailTemplate html = pure $ html (\page _ -> getPagePath page)
+emailTemplate html = pure $ html (\page _ -> getUrl page)
 
 --------------------------------------------------------------------------------
 

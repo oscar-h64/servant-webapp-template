@@ -77,14 +77,14 @@ loginPost = authNotRequired $ do
                                           (0 :: Int)
 
     applyAuthCookies <- maybe error401 pure mApplyCookies
-    pure $ applyAuthCookies $ addHeader (getPagePath Home) NoContent
+    pure $ applyAuthCookies $ addHeader (getUrl Home) NoContent
 
 --------------------------------------------------------------------------------
 
 newtype LogoutForm = MkLogoutForm { logoutRedirectUrl :: Text }
 
 instance FromForm LogoutForm where
-    fromForm = fmap (MkLogoutForm . ensureRelativeUrl (getPagePath Home))
+    fromForm = fmap (MkLogoutForm . ensureRelativeUrl (getUrl Home))
              . parseUnique "redirectUrl"
 
 logoutPost :: LogoutForm
